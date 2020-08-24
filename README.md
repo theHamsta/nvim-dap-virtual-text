@@ -10,7 +10,7 @@ This plugin adds virtual text support to nvim-dap. nvim-treesitter is used to fi
 
 
 
-The behavior of this can be controlled by a global variable
+The behavior of this can be controlled by a global variable (`g:dap_virtual_text` in viml)
 
 ```lua
     -- virtual text deactivated (default)
