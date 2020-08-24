@@ -22,12 +22,6 @@ dap.custom_event_handlers.event_continued[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
 end
 
-dap.custom_event_handlers.event_stopped[plugin_id] = function(session, _)
-  if not session.current_frame.scopes or #session.current_frame.scopes == 0 then
-    session._request_scopes(session.current_frame)
-  end
-end
-
 -- update virtual text after "variables" request
 dap.custom_response_handlers.variables[plugin_id] = function(session, _)
   local virtual_text= require'nvim-dap-virtual-text/virtual_text'
