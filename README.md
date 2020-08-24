@@ -1,7 +1,7 @@
 # nvim-dap-virtual-text
 
 This plugin adds virtual text support to [nvim-dap](https://github.com/mfussenegger/nvim-dap).
-nvim-treesitter is used to find variable definitions.
+[nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) is used to find variable definitions.
 
 ```vim
     Plug 'mfussenegger/nvim-dap'
