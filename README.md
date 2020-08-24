@@ -30,6 +30,6 @@ With `vim.g.dap_virtual_text = 'all frames'`
 ![all_scopes](https://user-images.githubusercontent.com/7189118/81495701-6b48f980-92b2-11ea-8df4-dd476dc825bc.gif)
 
 It works for all languages with `locals.scm` in nvim-treesitter (`@definition.var` is required for variable definitions).
-This should include C/C++, Rust, Go, Java...
+This should include C/C++, Python, Rust, Go, Java...
 
 ![image](https://user-images.githubusercontent.com/7189118/82733259-f4304e00-9d12-11ea-90da-addebada2e18.png)
