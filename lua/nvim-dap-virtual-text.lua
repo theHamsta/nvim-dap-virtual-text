@@ -13,7 +13,7 @@ if not require_ok then return end
 if not dap.custom_event_handlers then return end
 
 dap.custom_event_handlers.event_exited[plugin_id] = function(_, _)
-  local virtual_text= require'nvim-dap-virtual-text/virtual_text'
+  local virtual_text = require'nvim-dap-virtual-text/virtual_text'
   virtual_text.clear_virtual_text()
 end
 
@@ -26,7 +26,7 @@ end
 dap.custom_response_handlers.variables[plugin_id] = function(session, _)
   if not vim.g.dap_virtual_text then return end
 
-  local virtual_text= require'nvim-dap-virtual-text/virtual_text'
+  local virtual_text = require'nvim-dap-virtual-text/virtual_text'
   virtual_text.clear_virtual_text()
 
   if vim.g.dap_virtual_text == 'all frames' then
