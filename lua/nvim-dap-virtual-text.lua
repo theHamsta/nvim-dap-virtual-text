@@ -24,6 +24,37 @@ end
 
 -- update virtual text after "variables" request
 dap.custom_response_handlers.variables[plugin_id] = function(session, _)
+  if not vim.g.dap_virtual_text then return end
+
   local virtual_text= require'nvim-dap-virtual-text/virtual_text'
-  virtual_text.set_virtual_text(session.current_frame)
+  virtual_text.clear_virtual_text()
+
+  if vim.g.dap_virtual_text == 'all frames' then
+
+    local frames = session.threads[session.stopped_thread_id].frames
+    for _, f in pairs(frames) do
+      virtual_text.set_virtual_text(f)
+    end
+
+  else
+     virtual_text.set_virtual_text(session.current_frame)
+  end
+end
+
+-- request additional stack frames for "all frames"
+dap.custom_response_handlers.stackTrace[plugin_id] = function(session, body)
+  if vim.g.dap_virtual_text == 'all frames' then
+    local requested_functions = {}
+
+    for _, f in pairs(body.stackFrames) do
+      dap.repl.append(vim.inspect(f))
+      -- Ensure to evaluate the same function only once to avoid race conditions
+      if not requested_functions[f.name] then
+        if not f.scopes or #f.scopes == 0 then
+           session:_request_scopes(f)
+         end
+        requested_functions[f.name] = true
+      end
+    end
+  end
 end
