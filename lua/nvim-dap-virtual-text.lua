@@ -45,7 +45,6 @@ dap.custom_response_handlers.stackTrace[plugin_id] = function(session, body)
     local requested_functions = {}
 
     for _, f in pairs(body.stackFrames) do
-      dap.repl.append(vim.inspect(f))
       -- Ensure to evaluate the same function only once to avoid race conditions
       -- since a function can be evaluated in multiple frames.
       if not requested_functions[f.name] then
