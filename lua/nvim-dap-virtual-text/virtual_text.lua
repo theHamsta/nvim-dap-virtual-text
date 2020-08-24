@@ -20,6 +20,8 @@ function M.set_virtual_text(stackframe)
   if not stackframe then return end
   if not stackframe.scopes then return end
   if not require_ok then return end
+  if not stackframe.source then return end
+  if not stackframe.source.path then return end
 
   local buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
 
