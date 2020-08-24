@@ -30,12 +30,10 @@ dap.custom_response_handlers.variables[plugin_id] = function(session, _)
   virtual_text.clear_virtual_text()
 
   if vim.g.dap_virtual_text == 'all frames' then
-
     local frames = session.threads[session.stopped_thread_id].frames
     for _, f in pairs(frames) do
       virtual_text.set_virtual_text(f)
     end
-
   else
      virtual_text.set_virtual_text(session.current_frame)
   end
@@ -49,6 +47,7 @@ dap.custom_response_handlers.stackTrace[plugin_id] = function(session, body)
     for _, f in pairs(body.stackFrames) do
       dap.repl.append(vim.inspect(f))
       -- Ensure to evaluate the same function only once to avoid race conditions
+      -- since a function can be evaluated in multiple frames.
       if not requested_functions[f.name] then
         if not f.scopes or #f.scopes == 0 then
            session:_request_scopes(f)
