@@ -32,3 +32,7 @@ It works for all languages with `locals.scm` in nvim-treesitter (`@definition.va
 This should include C/C++, Python, Rust, Go, Java...
 
 ![image](https://user-images.githubusercontent.com/7189118/82733259-f4304e00-9d12-11ea-90da-addebada2e18.png)
+
+![image](https://user-images.githubusercontent.com/7189118/91160889-485c1d00-e6ca-11ea-9c70-e329c50ed1e1.png)
+
+
