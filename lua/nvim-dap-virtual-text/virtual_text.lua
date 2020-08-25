@@ -13,6 +13,8 @@ local api = vim.api
 local require_ok, locals = pcall(require, "nvim-treesitter.locals")
 local _, ts_utils = pcall(require, "nvim-treesitter.ts_utils")
 local _, utils = pcall(require, "nvim-treesitter.utils")
+local _, parsers = pcall(require, "nvim-treesitter.parsers")
+local _, queries = pcall(require, "nvim-treesitter.query")
 
 local hl_namespace = api.nvim_create_namespace("nvim-dap-virtual-text")
 
@@ -22,8 +24,10 @@ function M.set_virtual_text(stackframe)
   if not require_ok then return end
   if not stackframe.source then return end
   if not stackframe.source.path then return end
-
   local buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
+  local lang =  parsers.get_buf_lang(buf)
+
+  if not parsers.has_parser(lang) or not queries.has_locals(lang) then return end
 
   local scope_nodes = locals.get_scopes(buf)
   local definition_nodes = locals.get_definitions(buf)
