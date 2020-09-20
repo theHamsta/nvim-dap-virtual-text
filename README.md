@@ -9,6 +9,8 @@ This plugin adds virtual text support to [nvim-dap](https://github.com/mfusseneg
     Plug 'theHamsta/nvim-dap-virtual-text'
 ```
 
+The hlgroup for the virtual text is `NvimDapVirtualText` (linked to `Comment`).
+
 The behavior of this can be controlled by a global variable (`g:dap_virtual_text` in viml)
 
 ```lua

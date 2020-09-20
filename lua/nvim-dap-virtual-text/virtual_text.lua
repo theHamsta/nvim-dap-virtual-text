@@ -68,7 +68,7 @@ function M.set_virtual_text(stackframe)
   end
 
   for line, content in pairs(virtual_text) do
-    api.nvim_buf_set_virtual_text(buf, hl_namespace, line, {{content, "Comment"}}, {})
+    api.nvim_buf_set_virtual_text(buf, hl_namespace, line, {{content, "NvimDapVirtualText"}}, {})
   end
 
 end
