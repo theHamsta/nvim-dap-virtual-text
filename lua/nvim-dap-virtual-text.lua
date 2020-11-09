@@ -1,4 +1,3 @@
-#! /usr/bin/env lua
 --
 -- nvim-dap-virtual-text.lua
 -- Copyright (C) 2020 Stephan Seitz <stephan.seitz@fau.de>
@@ -7,22 +6,20 @@
 --
 
 local require_ok, dap = pcall(require, "dap")
-local plugin_id = "nvim-dap-virtual-text"
-
 if not require_ok then return end
-if not dap.custom_event_handlers then return end
 
-vim.cmd[[
+local plugin_id = 'nvim-dap-virtual-text'
+local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
+
+vim.cmd [[
   highlight default link NvimDapVirtualText Comment
 ]]
 
 dap.custom_event_handlers.event_exited[plugin_id] = function(_, _)
-  local virtual_text = require'nvim-dap-virtual-text/virtual_text'
   virtual_text.clear_virtual_text()
 end
 
 dap.custom_event_handlers.event_continued[plugin_id] = function(_, _)
-  local virtual_text= require'nvim-dap-virtual-text/virtual_text'
   virtual_text.clear_virtual_text()
 end
 
@@ -30,7 +27,6 @@ end
 dap.custom_response_handlers.variables[plugin_id] = function(session, _, _)
   if not vim.g.dap_virtual_text then return end
 
-  local virtual_text = require'nvim-dap-virtual-text/virtual_text'
   virtual_text.clear_virtual_text()
 
   if vim.g.dap_virtual_text == 'all frames' then
