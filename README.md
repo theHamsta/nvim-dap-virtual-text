@@ -5,7 +5,7 @@ This plugin adds virtual text support to [nvim-dap](https://github.com/mfusseneg
 
 ```vim
     Plug 'mfussenegger/nvim-dap'
-    Plug 'nvim-treesitter/nvim-treesitter'
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'theHamsta/nvim-dap-virtual-text'
 ```
 
