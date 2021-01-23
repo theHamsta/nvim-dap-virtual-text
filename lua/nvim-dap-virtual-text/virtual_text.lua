@@ -42,6 +42,7 @@ function M.set_virtual_text(stackframe)
   end
 
   local virtual_text = {}
+  local node_ids = {}
   for _, d in pairs(definition_nodes) do
     local node = utils.get_at_path(d, 'var.node') or utils.get_at_path(d, 'parameter.node')
     if node then
@@ -61,7 +62,10 @@ function M.set_virtual_text(stackframe)
         end
 
         if in_scope then
-          virtual_text[node:start()] = (virtual_text[node:start()] and virtual_text[node:start()]..', ' or '')..name..' = '..evaluated.value
+          if not node_ids[node:id()] then
+            node_ids[node:id()] = true
+            virtual_text[node:start()] = (virtual_text[node:start()] and virtual_text[node:start()]..', ' or '')..name..' = '..evaluated.value
+          end
         end
       end
     end
