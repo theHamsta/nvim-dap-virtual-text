@@ -19,6 +19,10 @@ dap.custom_event_handlers.event_exited[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
 end
 
+dap.custom_event_handlers.event_terminated[plugin_id] = function(_, _)
+  virtual_text.clear_virtual_text()
+end
+
 dap.custom_event_handlers.event_continued[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
 end
