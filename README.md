@@ -22,6 +22,11 @@ The behavior of this can be controlled by a global variable (`g:dap_virtual_text
     vim.g.dap_virtual_text = 'all frames'
 ```
 
+So you could activate the plugin by pasting this into your `init.vim`
+```viml
+let g:dap_virtual_text = v:true
+```
+
 With `vim.g.dap_virtual_text = true`
 
 ![current_frame](https://user-images.githubusercontent.com/7189118/81495691-5d937400-92b2-11ea-8995-17daeda593cc.gif)
