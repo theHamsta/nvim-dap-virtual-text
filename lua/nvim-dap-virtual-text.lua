@@ -15,20 +15,20 @@ vim.cmd [[
   highlight default link NvimDapVirtualText Comment
 ]]
 
-dap.custom_event_handlers.event_exited[plugin_id] = function(_, _)
+dap.listeners.after.event_exited[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
 end
 
-dap.custom_event_handlers.event_terminated[plugin_id] = function(_, _)
+dap.listeners.after.event_terminated[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
 end
 
-dap.custom_event_handlers.event_continued[plugin_id] = function(_, _)
+dap.listeners.after.event_continued[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
 end
 
 -- update virtual text after "variables" request
-dap.custom_response_handlers.variables[plugin_id] = function(session, _, _)
+dap.listeners.after.variables[plugin_id] = function(session, _, _)
   if not vim.g.dap_virtual_text then return end
 
   virtual_text.clear_virtual_text()
@@ -44,7 +44,7 @@ dap.custom_response_handlers.variables[plugin_id] = function(session, _, _)
 end
 
 -- request additional stack frames for "all frames"
-dap.custom_response_handlers.stackTrace[plugin_id] = function(session, body, _)
+dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
   if vim.g.dap_virtual_text == 'all frames' then
     local requested_functions = {}
 
