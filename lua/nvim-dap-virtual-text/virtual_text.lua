@@ -17,9 +17,12 @@ local _, queries = pcall(require, "nvim-treesitter.query")
 
 local hl_namespace = api.nvim_create_namespace("nvim-dap-virtual-text")
 local error_set
+local info_set
+local stopped_frame
 
-M.error_prefix = '  '
-M.text_prefix = ''
+M.error_prefix = "  "
+M.info_prefix = "  "
+M.text_prefix = ""
 
 function M.set_virtual_text(stackframe)
   if not stackframe then
@@ -91,28 +94,57 @@ function M.set_virtual_text(stackframe)
   end
 
   for line, content in pairs(virtual_text) do
-    content = M.text_prefix..content
+    content = M.text_prefix .. content
     api.nvim_buf_set_virtual_text(buf, hl_namespace, line, {{content, "NvimDapVirtualText"}}, {})
   end
 
-  if error_set then
-    api.nvim_buf_set_virtual_text(buf, hl_namespace, stackframe.line - 1, {{error_set, "NvimDapVirtualTextError"}}, {})
+  if stopped_frame and stopped_frame.line and stopped_frame.source and stopped_frame.source.path then
+    local buf = vim.uri_to_bufnr(vim.uri_from_fname(stopped_frame.source.path))
+    if error_set then
+      api.nvim_buf_set_virtual_text(
+        buf,
+        hl_namespace,
+        stopped_frame.line - 1,
+        {{error_set, "NvimDapVirtualTextError"}},
+        {}
+      )
+    end
+    if info_set then
+      api.nvim_buf_set_virtual_text(
+        buf,
+        hl_namespace,
+        stopped_frame.line - 1,
+        {{info_set, "NvimDapVirtualTextInfo"}},
+        {}
+      )
+    end
   end
+end
+
+function M.set_info(message)
+  info_set = M.info_prefix..message
+end
+
+function M.set_stopped_frame(frame)
+  stopped_frame = frame
 end
 
 function M.set_error(response)
   if response then
     local exception_type = response.details and response.details.typeName
     local message =
-      M.error_prefix..
+      M.error_prefix ..
       (exception_type or "") ..
-      (response.description and ((exception_type and ": " or "") .. response.description) or "")
+        (response.description and ((exception_type and ": " or "") .. response.description) or "")
     error_set = message
   end
 end
 
-function M.clear_error()
+function M._on_continue()
   error_set = nil
+  info_set = nil
+  stopped_frame = nil
+  M.clear_virtual_text()
 end
 
 function M.clear_virtual_text(stackframe)
