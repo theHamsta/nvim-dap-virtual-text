@@ -6,7 +6,7 @@
 -- Distributed under terms of the GPLv3 license.
 --
 
-M = {}
+local M = {}
 
 local api = vim.api
 
