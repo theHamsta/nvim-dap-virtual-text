@@ -13,18 +13,22 @@ local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
 
 vim.cmd [[
   highlight default link NvimDapVirtualText Comment
+  highlight default link NvimDapVirtualTextError LspDiagnosticsVirtualTextError
 ]]
 
 dap.listeners.after.event_exited[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
+  virtual_text.clear_error()
 end
 
 dap.listeners.after.event_terminated[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
+  virtual_text.clear_error()
 end
 
 dap.listeners.after.event_continued[plugin_id] = function(_, _)
   virtual_text.clear_virtual_text()
+  virtual_text.clear_error()
 end
 
 -- update virtual text after "variables" request
@@ -59,4 +63,9 @@ dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
       end
     end
   end
+end
+
+dap.listeners.after.exceptionInfo[plugin_id] = function(_, _, response)
+  if not vim.g.dap_virtual_text then return end
+  virtual_text.set_error(response)
 end
