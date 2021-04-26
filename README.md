@@ -10,6 +10,8 @@ This plugin adds virtual text support to [nvim-dap](https://github.com/mfusseneg
 ```
 
 The hlgroup for the virtual text is `NvimDapVirtualText` (linked to `Comment`).
+Exceptions that caused the debugger to stop are displayed as `NvimDapVirtualTextError`
+(linked to `LspDiagnosticsVirtualTextError`).
 
 The behavior of this can be controlled by a global variable (`g:dap_virtual_text` in viml)
 
@@ -42,4 +44,7 @@ This should include C/C++, Python, Rust, Go, Java...
 
 ![image](https://user-images.githubusercontent.com/7189118/91160889-485c1d00-e6ca-11ea-9c70-e329c50ed1e1.png)
 
+## Exceptions
 
+![image](https://user-images.githubusercontent.com/7189118/115946315-b3136180-a4c0-11eb-8d8b-980b11464448.png)
+![image](https://user-images.githubusercontent.com/7189118/115946346-db9b5b80-a4c0-11eb-8582-6075d818d869.png)
