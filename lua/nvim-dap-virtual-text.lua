@@ -49,14 +49,22 @@ dap.listeners.after.variables[plugin_id] = function(session, _, _)
   end
 end
 
--- request additional stack frames for "all frames"
 dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
-  if
+  if vim.g.dap_virtual_text and
     session.stopped_thread_id and session.threads[session.stopped_thread_id] and
       session.threads[session.stopped_thread_id].frames
    then
-    virtual_text.set_stopped_frame(session.threads[session.stopped_thread_id].frames[1])
+    local frames_with_source =
+      vim.tbl_filter(
+      function(f)
+        return f.source and f.source.path
+      end,
+      session.threads[session.stopped_thread_id].frames
+    )
+    virtual_text.set_stopped_frame(frames_with_source[1])
   end
+
+  -- request additional stack frames for "all frames"
   if vim.g.dap_virtual_text == "all frames" then
     local requested_functions = {}
 
