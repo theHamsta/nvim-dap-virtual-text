@@ -68,14 +68,16 @@ dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
   if vim.g.dap_virtual_text == "all frames" then
     local requested_functions = {}
 
-    for _, f in pairs(body.stackFrames) do
-      -- Ensure to evaluate the same function only once to avoid race conditions
-      -- since a function can be evaluated in multiple frames.
-      if not requested_functions[f.name] then
-        if not f.scopes or #f.scopes == 0 then
-          session:_request_scopes(f)
+    if body then
+      for _, f in pairs(body.stackFrames) do
+        -- Ensure to evaluate the same function only once to avoid race conditions
+        -- since a function can be evaluated in multiple frames.
+        if not requested_functions[f.name] then
+          if not f.scopes or #f.scopes == 0 then
+            session:_request_scopes(f)
+          end
+          requested_functions[f.name] = true
         end
-        requested_functions[f.name] = true
       end
     end
   end
