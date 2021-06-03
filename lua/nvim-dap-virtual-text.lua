@@ -11,7 +11,6 @@ if not require_ok then
 end
 
 local plugin_id = "nvim-dap-virtual-text"
-local virtual_text = require "nvim-dap-virtual-text/virtual_text"
 
 vim.cmd [[
   highlight default link NvimDapVirtualText Comment
@@ -19,11 +18,17 @@ vim.cmd [[
   highlight default link NvimDapVirtualTextInfo LspDiagnosticsVirtualTextInfo
 ]]
 
-dap.listeners.after.event_terminated[plugin_id] = virtual_text._on_continue
-dap.listeners.after.event_exited[plugin_id] = virtual_text._on_continue
-dap.listeners.after.event_continued[plugin_id] = virtual_text._on_continue
+local function on_continue()
+  local virtual_text = require "nvim-dap-virtual-text/virtual_text"
+  virtual_text._on_continue()
+end
+
+dap.listeners.after.event_terminated[plugin_id] = on_continue
+dap.listeners.after.event_exited[plugin_id] = on_continue
+dap.listeners.after.event_continued[plugin_id] = on_continue
 
 dap.listeners.after.event_stopped[plugin_id] = function(_, event)
+  local virtual_text = require "nvim-dap-virtual-text/virtual_text"
   if event and event.reason == "exception" then
     virtual_text.set_error("Stopped due to exception")
   elseif event and event.reason == "data breakpoint" then
@@ -33,6 +38,7 @@ end
 
 -- update virtual text after "variables" request
 dap.listeners.after.variables[plugin_id] = function(session, _, _)
+  local virtual_text = require "nvim-dap-virtual-text/virtual_text"
   if not vim.g.dap_virtual_text then
     return
   end
@@ -50,6 +56,7 @@ dap.listeners.after.variables[plugin_id] = function(session, _, _)
 end
 
 dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
+  local virtual_text = require "nvim-dap-virtual-text/virtual_text"
   if vim.g.dap_virtual_text and
     session.stopped_thread_id and session.threads[session.stopped_thread_id] and
       session.threads[session.stopped_thread_id].frames
@@ -84,6 +91,7 @@ dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
 end
 
 dap.listeners.after.exceptionInfo[plugin_id] = function(_, _, response)
+  local virtual_text = require "nvim-dap-virtual-text/virtual_text"
   if not vim.g.dap_virtual_text then
     return
   end
