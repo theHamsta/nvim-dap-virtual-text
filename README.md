@@ -48,3 +48,10 @@ This should include C/C++, Python, Rust, Go, Java...
 
 ![image](https://user-images.githubusercontent.com/7189118/115946315-b3136180-a4c0-11eb-8d8b-980b11464448.png)
 ![image](https://user-images.githubusercontent.com/7189118/115946346-db9b5b80-a4c0-11eb-8582-6075d818d869.png)
+
+Exception virtual text can be deactivated via
+
+```lua
+require'nvim-dap-virtual-text'
+require'dap'.listeners.after.exceptionInfo['nvim-dap-virtual-text'] = function() end
+```
