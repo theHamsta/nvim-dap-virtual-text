@@ -94,6 +94,9 @@ function M.set_virtual_text(stackframe)
   end
 
   for line, content in pairs(virtual_text) do
+    if vim.g.dap_virtual_text_commented then
+      content = vim.fn.substitute(vim.o.commentstring, "%s", content, nil)
+    end
     content = M.text_prefix .. content
     api.nvim_buf_set_virtual_text(buf, hl_namespace, line, {{content, "NvimDapVirtualText"}}, {})
   end
@@ -101,20 +104,28 @@ function M.set_virtual_text(stackframe)
   if stopped_frame and stopped_frame.line and stopped_frame.source and stopped_frame.source.path then
     local buf = vim.uri_to_bufnr(vim.uri_from_fname(stopped_frame.source.path))
     if error_set then
+      local error_msg = error_set
+      if vim.g.dap_virtual_text_commented then
+        error_msg = vim.fn.substitute(vim.o.commentstring, "%s", error_set, nil)
+      end
       api.nvim_buf_set_virtual_text(
         buf,
         hl_namespace,
         stopped_frame.line - 1,
-        {{error_set, "NvimDapVirtualTextError"}},
+        {{error_msg, "NvimDapVirtualTextError"}},
         {}
       )
     end
     if info_set then
+      local info_msg = info_set
+      if vim.g.dap_virtual_text_commented then
+        info_msg = vim.fn.substitute(vim.o.commentstring, "%s", info_set, nil)
+      end
       api.nvim_buf_set_virtual_text(
         buf,
         hl_namespace,
         stopped_frame.line - 1,
-        {{info_set, "NvimDapVirtualTextInfo"}},
+        {{info_msg, "NvimDapVirtualTextInfo"}},
         {}
       )
     end
