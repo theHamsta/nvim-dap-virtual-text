@@ -95,7 +95,7 @@ function M.set_virtual_text(stackframe)
 
   for line, content in pairs(virtual_text) do
     if vim.g.dap_virtual_text_commented then
-      content = vim.fn.substitute(vim.o.commentstring, "%s", content, nil)
+      content = vim.o.commentstring:gsub('%%s', content)
     end
     content = M.text_prefix .. content
     api.nvim_buf_set_virtual_text(buf, hl_namespace, line, {{content, "NvimDapVirtualText"}}, {})
@@ -106,7 +106,7 @@ function M.set_virtual_text(stackframe)
     if error_set then
       local error_msg = error_set
       if vim.g.dap_virtual_text_commented then
-        error_msg = vim.fn.substitute(vim.o.commentstring, "%s", error_set, nil)
+        error_msg = vim.o.commentstring:gsub('%%s', error_set)
       end
       api.nvim_buf_set_virtual_text(
         buf,
@@ -119,7 +119,7 @@ function M.set_virtual_text(stackframe)
     if info_set then
       local info_msg = info_set
       if vim.g.dap_virtual_text_commented then
-        info_msg = vim.fn.substitute(vim.o.commentstring, "%s", info_set, nil)
+        info_msg = vim.o.commentstring:gsub('%%s', info_set)
       end
       api.nvim_buf_set_virtual_text(
         buf,
