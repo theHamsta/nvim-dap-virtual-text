@@ -44,6 +44,16 @@ This should include C/C++, Python, Rust, Go, Java...
 
 ![image](https://user-images.githubusercontent.com/7189118/91160889-485c1d00-e6ca-11ea-9c70-e329c50ed1e1.png)
 
+The virtual text can additionally use a comment-like syntax to further improve distinguishability between actual code and debugger info by setting the following option:
+```viml
+let g:dap_virtual_text_commented = v:true
+```
+
+This will use the `commentstring` option to choose the appropriate comment-syntax for the current filetype
+
+![image](https://user-images.githubusercontent.com/6146545/134688673-49c86368-ed51-4f16-82b4-fce05bcd9767.PNG)
+
+
 ## Exceptions
 
 ![image](https://user-images.githubusercontent.com/7189118/115946315-b3136180-a4c0-11eb-8d8b-980b11464448.png)
