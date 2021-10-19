@@ -45,7 +45,7 @@ dap.listeners.after.variables[plugin_id] = function(session, _, _)
 
   virtual_text.clear_virtual_text()
 
-  if vim.g.dap_virtual_text == "all frames" then
+  if vim.g.dap_virtual_text == "all frames" and session.threads then
     local frames = session.threads[session.stopped_thread_id].frames
     for _, f in pairs(frames) do
       virtual_text.set_virtual_text(f)
