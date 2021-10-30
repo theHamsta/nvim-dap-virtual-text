@@ -59,7 +59,7 @@ function M.disable()
 end
 
 function M.setup(opts)
-  vim.tbl_deep_extend('force', options, opts or {})
+  options = vim.tbl_deep_extend('force', options, opts or {})
 
   vim.cmd [[
   highlight default link NvimDapVirtualText Comment
