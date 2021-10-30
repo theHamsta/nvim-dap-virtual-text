@@ -92,7 +92,8 @@ function M.set_virtual_text(stackframe, options)
           if not node_ids[node:id()] then
             node_ids[node:id()] = true
             local node_range = { node:range() }
-            local has_changed = (evaluated.value ~= (last_value and last_value.value))
+            local has_changed = options.highlight_changed_variables
+              and (evaluated.value ~= (last_value and last_value.value))
             local text = name .. ' = ' .. evaluated.value
             if options.commented then
               text = vim.o.commentstring:gsub('%%s', text)

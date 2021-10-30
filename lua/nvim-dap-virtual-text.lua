@@ -12,6 +12,7 @@ local plugin_id = 'nvim-dap-virtual-text'
 local options = {
   enabled = true,
   all_frames = true,
+  highlight_changed_variables = true,
   show_stop_reason = true,
   text_prefix = '',
   separator = '| ',
