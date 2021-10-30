@@ -32,7 +32,7 @@ local function refresh(session)
   end
 
   session = session or dap.session()
-  if all_frames and session.threads and session.threads[session.stopped_thread_id] then
+  if options.all_frames and session.threads and session.threads[session.stopped_thread_id] then
     local frames = session.threads[session.stopped_thread_id].frames
     for _, f in pairs(frames) do
       virtual_text.set_virtual_text(f, options)
@@ -115,7 +115,7 @@ function M.setup(opts)
     end
 
     -- request additional stack frames for "all frames"
-    if all_frames then
+    if options.all_frames then
       local requested_functions = {}
 
       if body then

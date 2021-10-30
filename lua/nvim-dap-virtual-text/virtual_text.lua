@@ -55,7 +55,7 @@ function M.set_virtual_text(stackframe, options)
       end
     end
   end
-  last_variables = {}
+  local last_variables = {}
 
   for _, s in ipairs(last_frames[stackframe.id] and last_frames[stackframe.id].scopes or {}) do
     if s.variables then
