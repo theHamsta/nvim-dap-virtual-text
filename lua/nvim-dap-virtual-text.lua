@@ -13,6 +13,13 @@ local options = {
   enabled = true,
   all_frames = true,
   show_stop_reason = true,
+  text_prefix = '',
+  separator = '| ',
+  error_perfix = '  ',
+  info_perfix = '  ',
+  virt_text_pos = 'eol',
+  virt_lines = false,
+  virt_lines_above = true,
 }
 
 local function refresh(session)
@@ -25,14 +32,13 @@ local function refresh(session)
   end
 
   session = session or dap.session()
-  virtual_text.set_virtual_text(session.current_frame)
   if all_frames and session.threads and session.threads[session.stopped_thread_id] then
     local frames = session.threads[session.stopped_thread_id].frames
     for _, f in pairs(frames) do
-      virtual_text.set_virtual_text(f)
+      virtual_text.set_virtual_text(f, options)
     end
   else
-    virtual_text.set_virtual_text(session.current_frame)
+    virtual_text.set_virtual_text(session.current_frame, options)
   end
 end
 
@@ -56,7 +62,7 @@ function M.setup(opts)
 
   vim.cmd [[
   highlight default link NvimDapVirtualText Comment
-  highlight default link NvimDapVirtualTextChanged DiagnosticsVirtualTextWarn
+  highlight default link NvimDapVirtualTextChanged DiagnosticVirtualTextWarn
   highlight default link NvimDapVirtualTextError DiagnosticsVirtualTextError
   highlight default link NvimDapVirtualTextInfo DiagnosticsVirtualTextInfo
   ]]
@@ -68,22 +74,28 @@ function M.setup(opts)
 
   dap.listeners.after.event_terminated[plugin_id] = on_continue
   dap.listeners.after.event_exited[plugin_id] = on_continue
-  dap.listeners.after.event_continued[plugin_id] = on_continue
+  dap.listeners.before.event_continued[plugin_id] = function(session)
+    local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
+    virtual_text.set_last_frames(session.threads)
+    on_continue()
+  end
 
+  dap.listeners.before.event_stopped[plugin_id] = function(session)
+    local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
+    virtual_text.set_last_frames(session.threads)
+  end
   dap.listeners.after.event_stopped[plugin_id] = function(_, event)
     local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
     if options.show_stop_reason then
       if event and event.reason == 'exception' then
-        virtual_text.set_error 'Stopped due to exception'
+        virtual_text.set_error('Stopped due to exception', options)
       elseif event and event.reason == 'data breakpoint' then
-        virtual_text.set_info('Stopped due to ' .. event.reason)
+        virtual_text.set_info('Stopped due to ' .. event.reason, options)
       end
     end
   end
 
-  dap.listeners.after.variables[plugin_id] = function(session, _, _)
-    refresh()
-  end
+  dap.listeners.after.variables[plugin_id] = refresh
 
   dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
     if not options.enabled then
