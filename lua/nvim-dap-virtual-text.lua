@@ -12,6 +12,7 @@ local plugin_id = 'nvim-dap-virtual-text'
 local options = {
   enabled = true,
   all_frames = true,
+  show_stop_reason = true,
 }
 
 local function refresh(session)
@@ -71,10 +72,12 @@ function M.setup(opts)
 
   dap.listeners.after.event_stopped[plugin_id] = function(_, event)
     local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
-    if event and event.reason == 'exception' then
-      virtual_text.set_error 'Stopped due to exception'
-    elseif event and event.reason == 'data breakpoint' then
-      virtual_text.set_info('Stopped due to ' .. event.reason)
+    if options.show_stop_reason then
+      if event and event.reason == 'exception' then
+        virtual_text.set_error 'Stopped due to exception'
+      elseif event and event.reason == 'data breakpoint' then
+        virtual_text.set_info('Stopped due to ' .. event.reason)
+      end
     end
   end
 
