@@ -72,7 +72,7 @@ This will use the `commentstring` option to choose the appropriate comment-synta
 
 ![image](https://user-images.githubusercontent.com/6146545/134688673-49c86368-ed51-4f16-82b4-fce05bcd9767.PNG)
 
-With `virt_text_win_col = 80, highlight_changed_variables = true` (x just has changed its value)
+With `virt_text_win_col = 80, highlight_changed_variables = true` (x has just changed its value)
 
 ![image](https://user-images.githubusercontent.com/7189118/139598856-d45e02ef-62f6-4f7e-a619-ed9b48d53cc1.png)
 
