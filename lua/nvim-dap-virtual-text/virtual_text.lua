@@ -135,7 +135,8 @@ function M.set_virtual_text(stackframe, options)
         virt_lines_above = options.virt_lines_above,
       })
     else
-      local win_col = options.virt_text_win_col
+      local line = api.nvim_buf_get_lines(buf, line, line + 1, true)[1]
+      local win_col = math.max(options.virt_text_win_col or 0, #line + 1)
       for i, virt_text in ipairs(content) do
         local node_range = { virt_text.node:range() }
         if i < #content then
