@@ -24,7 +24,7 @@ local options = {
   virt_text_pos = 'eol',
   virt_lines = false,
   virt_lines_above = true,
-  virt_text_win_col = nil
+  virt_text_win_col = nil,
 }
 
 local function refresh(session)
@@ -157,7 +157,8 @@ if vim.g.dap_virtual_text then
     '['
       .. plugin_id
       .. ']: using g:dap_virtual_text is deprecated!'
-      .. " Please use `lua require'nvim-dap-virtual-text'.setup()'`"
+      .. " Please use `lua require'nvim-dap-virtual-text'.setup()'`."
+      .. ' Find more information about the new config options in our README!'
   )
   M.setup()
 end
