@@ -157,7 +157,7 @@ if vim.g.dap_virtual_text then
     '['
       .. plugin_id
       .. ']: using g:dap_virtual_text is deprecated!'
-      .. " Please use `lua require'nvim-dap-virual-text'.setup()'`"
+      .. " Please use `lua require'nvim-dap-virtual-text'.setup()'`"
   )
   M.setup()
 end
