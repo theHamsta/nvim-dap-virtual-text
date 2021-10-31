@@ -107,33 +107,19 @@ function M.set_virtual_text(stackframe, options)
               { node_range[1], 0 },
               {}
             )
-            if #extmarks > 0 then
-              text = options.separator .. text
-            end
 
-            if options.virt_lines then
-              if virt_lines[node:start()] then
+            if virt_lines[node:start()] then
+              if options.virt_lines then
                 text = ' ' .. options.separator .. text
-              else
-                virt_lines[node:start()] = {}
               end
-              table.insert(virt_lines[node:start()], {
-                text,
-                has_changed and 'NvimDapVirtualTextChanged' or 'NvimDapVirtualText',
-              })
             else
-              vim.api.nvim_buf_set_extmark(buf, hl_namespace, node_range[1], node_range[2], {
-                end_line = node_range[3],
-                end_col = node_range[4],
-                virt_text = {
-                  {
-                    text,
-                    has_changed and 'NvimDapVirtualTextChanged' or 'NvimDapVirtualText',
-                  },
-                },
-                virt_text_pos = options.virt_text_pos,
-              })
+              virt_lines[node:start()] = {}
             end
+            table.insert(virt_lines[node:start()], {
+              text,
+              has_changed and 'NvimDapVirtualTextChanged' or 'NvimDapVirtualText',
+              node = node,
+            })
           end
         end
       end
@@ -141,10 +127,26 @@ function M.set_virtual_text(stackframe, options)
   end
 
   for line, content in pairs(virt_lines) do
-    vim.api.nvim_buf_set_extmark(buf, hl_namespace, line, 0, {
-      virt_lines = { content },
-      virt_lines_above = options.virt_lines_above,
-    })
+    if options.virt_lines then
+      vim.api.nvim_buf_set_extmark(buf, hl_namespace, line, 0, {
+        virt_lines = { content },
+        virt_lines_above = options.virt_lines_above,
+      })
+    else
+      for i, virt_text in ipairs(content) do
+        local node_range = { virt_text.node:range() }
+        if i < #content then
+          virt_text[1] = virt_text[1] .. options.separator
+        end
+        virt_text.node = nil
+        vim.api.nvim_buf_set_extmark(buf, hl_namespace, node_range[1], node_range[2], {
+          end_line = node_range[3],
+          end_col = node_range[4],
+          virt_text = { virt_text },
+          virt_text_pos = options.virt_text_pos,
+        })
+      end
+    end
   end
 
   if stopped_frame and stopped_frame.line and stopped_frame.source and stopped_frame.source.path then
