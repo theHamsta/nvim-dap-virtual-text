@@ -89,6 +89,7 @@ function M.set_virtual_text(stackframe, options)
         end
 
         if in_scope then
+          variables[name] = nil
           if not node_ids[node:id()] then
             node_ids[node:id()] = true
             local node_range = { node:range() }
