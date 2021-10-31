@@ -11,6 +11,7 @@ local dap = require 'dap'
 local plugin_id = 'nvim-dap-virtual-text'
 local options = {
   enabled = true,
+  enable_commands = true,
   all_frames = false,
   commented = false,
   highlight_changed_variables = true,
@@ -70,6 +71,15 @@ function M.setup(opts)
   highlight default link NvimDapVirtualTextError DiagnosticsVirtualTextError
   highlight default link NvimDapVirtualTextInfo DiagnosticsVirtualTextInfo
   ]]
+
+  if options.enable_commands then
+    vim.cmd [[
+    command! DapVirtualTextEnable :lua require'nvim-dap-virtual-text'.enable()
+    command! DapVirtualTextDisable :lua require'nvim-dap-virtual-text'.disable()
+    command! DapVirtualTextToggle :lua require'nvim-dap-virtual-text'.toggle()
+    command! DapVirtualTextForceRefresh :lua require'nvim-dap-virtual-text'.refresh()
+    ]]
+  end
 
   local function on_continue()
     local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
