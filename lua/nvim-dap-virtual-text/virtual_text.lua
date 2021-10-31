@@ -92,7 +92,6 @@ function M.set_virtual_text(stackframe, options)
           variables[name] = nil
           if not node_ids[node:id()] then
             node_ids[node:id()] = true
-            local node_range = { node:range() }
             local has_changed = options.highlight_changed_variables
               and (evaluated.value ~= (last_value and last_value.value))
               and (options.highlight_new_as_changed or last_value)
@@ -101,14 +100,6 @@ function M.set_virtual_text(stackframe, options)
               text = vim.o.commentstring:gsub('%%s', text)
             end
             text = options.text_prefix .. text
-
-            local extmarks = vim.api.nvim_buf_get_extmarks(
-              buf,
-              hl_namespace,
-              { node_range[1], 0 },
-              { node_range[1], 0 },
-              {}
-            )
 
             if virt_lines[node:start()] then
               if options.virt_lines then
@@ -135,8 +126,8 @@ function M.set_virtual_text(stackframe, options)
         virt_lines_above = options.virt_lines_above,
       })
     else
-      local line = api.nvim_buf_get_lines(buf, line, line + 1, true)[1]
-      local win_col = math.max(options.virt_text_win_col or 0, #line + 1)
+      local line_text = api.nvim_buf_get_lines(buf, line, line + 1, true)[1]
+      local win_col = math.max(options.virt_text_win_col or 0, #line_text + 1)
       for i, virt_text in ipairs(content) do
         local node_range = { virt_text.node:range() }
         if i < #content then
