@@ -14,6 +14,7 @@ local options = {
   all_frames = false,
   commented = false,
   highlight_changed_variables = true,
+  highlight_new_as_changed = false,
   show_stop_reason = true,
   text_prefix = '',
   separator = ',',
@@ -22,6 +23,7 @@ local options = {
   virt_text_pos = 'eol',
   virt_lines = false,
   virt_lines_above = true,
+  virt_text_win_col = nil
 }
 
 local function refresh(session)

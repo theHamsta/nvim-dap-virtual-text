@@ -95,6 +95,7 @@ function M.set_virtual_text(stackframe, options)
             local node_range = { node:range() }
             local has_changed = options.highlight_changed_variables
               and (evaluated.value ~= (last_value and last_value.value))
+              and (options.highlight_new_as_changed or last_value)
             local text = name .. ' = ' .. evaluated.value
             if options.commented then
               text = vim.o.commentstring:gsub('%%s', text)
@@ -145,6 +146,7 @@ function M.set_virtual_text(stackframe, options)
           end_col = node_range[4],
           virt_text = { virt_text },
           virt_text_pos = options.virt_text_pos,
+          virt_text_win_col = options.virt_text_win_col,
         })
       end
     end
