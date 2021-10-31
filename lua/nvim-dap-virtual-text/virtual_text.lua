@@ -135,6 +135,7 @@ function M.set_virtual_text(stackframe, options)
         virt_lines_above = options.virt_lines_above,
       })
     else
+      local win_col = options.virt_text_win_col
       for i, virt_text in ipairs(content) do
         local node_range = { virt_text.node:range() }
         if i < #content then
@@ -146,8 +147,9 @@ function M.set_virtual_text(stackframe, options)
           end_col = node_range[4],
           virt_text = { virt_text },
           virt_text_pos = options.virt_text_pos,
-          virt_text_win_col = options.virt_text_win_col,
+          virt_text_win_col = options.virt_text_win_col and win_col,
         })
+        win_col = win_col + #virt_text[1] + 1
       end
     end
   end
