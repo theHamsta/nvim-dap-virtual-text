@@ -77,7 +77,7 @@ With `virt_text_win_col = 80, highlight_changed_variables = true` (x has just ch
 ![image](https://user-images.githubusercontent.com/7189118/139598856-d45e02ef-62f6-4f7e-a619-ed9b48d53cc1.png)
 
 
-## Exceptions
+## Show Stop Reason on Exception
 
 ![image](https://user-images.githubusercontent.com/7189118/115946315-b3136180-a4c0-11eb-8d8b-980b11464448.png)
 ![image](https://user-images.githubusercontent.com/7189118/115946346-db9b5b80-a4c0-11eb-8582-6075d818d869.png)
