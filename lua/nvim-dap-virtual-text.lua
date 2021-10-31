@@ -76,11 +76,7 @@ function M.setup(opts)
 
   dap.listeners.after.event_terminated[plugin_id] = on_continue
   dap.listeners.after.event_exited[plugin_id] = on_continue
-  dap.listeners.before.event_continued[plugin_id] = function(session)
-    local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
-    virtual_text.set_last_frames(session.threads)
-    on_continue()
-  end
+  dap.listeners.before.event_continued[plugin_id] = on_continue
 
   dap.listeners.before.event_stopped[plugin_id] = function(session)
     local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
