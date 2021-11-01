@@ -224,7 +224,6 @@ function M.clear_virtual_text(stackframe)
 end
 
 function M.set_last_frames(threads)
-  last_frames = {}
   for _, t in pairs(threads or {}) do
     for _, f in pairs(t.frames or {}) do
       if f and f.id then
@@ -232,6 +231,10 @@ function M.set_last_frames(threads)
       end
     end
   end
+end
+
+function M.clear_last_frames()
+  last_frames = {}
 end
 
 return M
