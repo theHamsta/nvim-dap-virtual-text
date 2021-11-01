@@ -10,8 +10,7 @@ local M = {}
 local api = vim.api
 
 local require_ok, locals = pcall(require, 'nvim-treesitter.locals')
-local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
-local _, utils = pcall(require, 'nvim-treesitter.utils')
+local _, tsrange = pcall(require, 'nvim-treesitter.tsrange')
 local _, parsers = pcall(require, 'nvim-treesitter.parsers')
 local _, queries = pcall(require, 'nvim-treesitter.query')
 
@@ -20,6 +19,21 @@ local error_set
 local info_set
 local stopped_frame
 local last_frames = {}
+
+local function find_definition(node, bufnr, node_text)
+  local def_lookup = locals.get_definitions_lookup_table(bufnr)
+
+  for scope in locals.iter_scope_tree(node, bufnr) do
+    local id = locals.get_definition_id(scope, node_text)
+
+    if def_lookup[id] then
+      local entry = def_lookup[id]
+
+      return entry.node, scope, entry.kind
+    end
+  end
+  return nil
+end
 
 function M.set_virtual_text(stackframe, options)
   if not stackframe then
@@ -44,13 +58,16 @@ function M.set_virtual_text(stackframe, options)
     return
   end
 
-  local scope_nodes = locals.get_scopes(buf)
-  local definition_nodes = locals.get_definitions(buf)
   local variables = {}
 
   -- prefer "locals"
   local scopes = stackframe.scopes or {}
-  scopes = vim.list_extend(scopes, vim.tbl_filter(function(s) return s.presentationHint == 'locals' end, scopes))
+  scopes = vim.list_extend(
+    scopes,
+    vim.tbl_filter(function(s)
+      return s.presentationHint == 'locals'
+    end, scopes)
+  )
   for _, s in ipairs(scopes) do
     if s.variables then
       for _, v in pairs(s.variables) do
@@ -61,7 +78,12 @@ function M.set_virtual_text(stackframe, options)
 
   local last_variables = {}
   local last_scopes = last_frames[stackframe.id] and last_frames[stackframe.id].scopes or {}
-  last_scopes = vim.list_extend(last_scopes, vim.tbl_filter(function(s) return s.presentationHint == 'locals' end, last_scopes))
+  last_scopes = vim.list_extend(
+    last_scopes,
+    vim.tbl_filter(function(s)
+      return s.presentationHint == 'locals'
+    end, last_scopes)
+  )
 
   for _, s in ipairs(last_scopes) do
     if s.variables then
@@ -72,56 +94,41 @@ function M.set_virtual_text(stackframe, options)
   end
   local virt_lines = {}
 
-  local node_ids = {}
-  for _, d in pairs(definition_nodes) do
-    local node = utils.get_at_path(d, 'var.node') or utils.get_at_path(d, 'parameter.node')
-    if node then
-      local name = ts_utils.get_node_text(node, buf)[1]
-      local var_line, var_col = node:start()
+  for name, evaluated in pairs(variables) do
+    local range = tsrange.TSRange.new(
+      buf,
+      stackframe.line - 1,
+      stackframe.column - 1,
+      stackframe.line - 1,
+      stackframe.column - 1
+    )
+    -- TODO: check for kind?
+    local node, _ = find_definition(range, buf, name)
 
-      local evaluated = variables[name]
+    if node and evaluated.value then
       local last_value = last_variables[name]
-      if evaluated then -- evaluated local with same name exists
-        -- is this name really the local or is it in another scope?
-        local in_scope = true
-        for _, scope in ipairs(scope_nodes) do
-          if
-            ts_utils.is_in_node_range(scope, var_line, var_col)
-            and not ts_utils.is_in_node_range(scope, stackframe.line - 1, 0)
-          then
-            in_scope = false
-            break
-          end
-        end
 
-        if in_scope then
-          variables[name] = nil
-          if not node_ids[node:id()] then
-            node_ids[node:id()] = true
-            local has_changed = options.highlight_changed_variables
-              and (evaluated.value ~= (last_value and last_value.value))
-              and (options.highlight_new_as_changed or last_value)
-            local text = name .. ' = ' .. evaluated.value
-            if options.commented then
-              text = vim.o.commentstring:gsub('%%s', text)
-            end
-            text = options.text_prefix .. text
-
-            if virt_lines[node:start()] then
-              if options.virt_lines then
-                text = ' ' .. options.separator .. text
-              end
-            else
-              virt_lines[node:start()] = {}
-            end
-            table.insert(virt_lines[node:start()], {
-              text,
-              has_changed and 'NvimDapVirtualTextChanged' or 'NvimDapVirtualText',
-              node = node,
-            })
-          end
-        end
+      local has_changed = options.highlight_changed_variables
+        and (evaluated.value ~= (last_value and last_value.value))
+        and (options.highlight_new_as_changed or last_value)
+      local text = name .. ' = ' .. evaluated.value
+      if options.commented then
+        text = vim.o.commentstring:gsub('%%s', text)
       end
+      text = options.text_prefix .. text
+
+      if virt_lines[node:start()] then
+        if options.virt_lines then
+          text = ' ' .. options.separator .. text
+        end
+      else
+        virt_lines[node:start()] = {}
+      end
+      table.insert(virt_lines[node:start()], {
+        text,
+        has_changed and 'NvimDapVirtualTextChanged' or 'NvimDapVirtualText',
+        node = node,
+      })
     end
   end
 
