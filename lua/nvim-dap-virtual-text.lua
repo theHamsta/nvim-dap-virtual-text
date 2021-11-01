@@ -28,6 +28,7 @@ local options = {
 }
 
 function M.refresh(session)
+  session = session or dap.session()
   local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
 
   virtual_text.clear_virtual_text()
