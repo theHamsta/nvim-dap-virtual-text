@@ -48,16 +48,32 @@ function M.set_virtual_text(stackframe, options)
   local definition_nodes = locals.get_definitions(buf)
   local variables = {}
 
-  for _, s in ipairs(stackframe.scopes) do
+  -- prefer "locals"
+  local scopes = stackframe.scopes or {}
+  scopes = vim.list_extend(
+    scopes,
+    vim.tbl_filter(function(s)
+      return s.presentationHint == 'locals'
+    end, scopes)
+  )
+  for _, s in ipairs(scopes) do
     if s.variables then
       for _, v in pairs(s.variables) do
         variables[v.name] = v
       end
     end
   end
-  local last_variables = {}
 
-  for _, s in ipairs(last_frames[stackframe.id] and last_frames[stackframe.id].scopes or {}) do
+  local last_variables = {}
+  local last_scopes = last_frames[stackframe.id] and last_frames[stackframe.id].scopes or {}
+  last_scopes = vim.list_extend(
+    last_scopes,
+    vim.tbl_filter(function(s)
+      return s.presentationHint == 'locals'
+    end, last_scopes)
+  )
+
+  for _, s in ipairs(last_scopes) do
     if s.variables then
       for _, v in pairs(s.variables) do
         last_variables[v.name] = v
