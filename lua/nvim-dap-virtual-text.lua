@@ -27,7 +27,7 @@ local options = {
   virt_text_win_col = nil,
 }
 
-local function refresh(session)
+function M.refresh(session)
   local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
 
   virtual_text.clear_virtual_text()
@@ -49,17 +49,17 @@ end
 
 function M.enable()
   options.enabled = true
-  refresh()
+  M.refresh()
 end
 
 function M.toggle()
   options.enabled = not options.enabled
-  refresh()
+  M.refresh()
 end
 
 function M.disable()
   options.enabled = false
-  refresh()
+  M.refresh()
 end
 
 function M.setup(opts)
@@ -111,7 +111,7 @@ function M.setup(opts)
     end
   end
 
-  dap.listeners.after.variables[plugin_id] = refresh
+  dap.listeners.after.variables[plugin_id] = M.refresh
 
   dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
     if not options.enabled then
