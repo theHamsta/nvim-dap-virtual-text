@@ -36,8 +36,8 @@ function M.refresh(session)
   if not options.enabled then
     return
   end
+  if not session then return end
 
-  session = session or dap.session()
   if options.all_frames and session.threads and session.threads[session.stopped_thread_id] then
     local frames = session.threads[session.stopped_thread_id].frames
     for _, f in pairs(frames) do
