@@ -155,7 +155,7 @@ function M.setup(opts)
     if not options.enabled then
       return
     end
-    virtual_text.set_error(response)
+    virtual_text.set_error(response, options)
   end
 end
 
