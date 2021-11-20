@@ -59,7 +59,11 @@ function M.set_virtual_text(stackframe, options)
   for _, s in ipairs(scopes) do
     if s.variables then
       for _, v in pairs(s.variables) do
-        variables[v.name] = v
+        if lang == 'php' then
+          variables[v.name:gsub('^%$', '')] = v
+        else
+          variables[v.name] = v
+        end
       end
     end
   end
