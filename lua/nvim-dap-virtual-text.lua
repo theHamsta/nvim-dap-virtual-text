@@ -159,15 +159,4 @@ function M.setup(opts)
   end
 end
 
-if vim.g.dap_virtual_text then
-  print(
-    '['
-      .. plugin_id
-      .. ']: using g:dap_virtual_text is deprecated!'
-      .. " Please use `lua require'nvim-dap-virtual-text'.setup()'`."
-      .. ' Find more information about the new config options in our README!'
-  )
-  M.setup()
-end
-
 return M
