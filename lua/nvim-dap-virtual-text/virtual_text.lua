@@ -51,10 +51,10 @@ function M.set_virtual_text(stackframe, options)
   -- prefer "locals"
   local scopes = stackframe.scopes or {}
   scopes = vim.list_extend(
-    scopes,
     vim.tbl_filter(function(s)
       return s.presentationHint == 'locals'
-    end, scopes)
+    end, scopes),
+    scopes
   )
   for _, s in ipairs(scopes) do
     if s.variables then
@@ -67,10 +67,10 @@ function M.set_virtual_text(stackframe, options)
   local last_variables = {}
   local last_scopes = last_frames[stackframe.id] and last_frames[stackframe.id].scopes or {}
   last_scopes = vim.list_extend(
-    last_scopes,
     vim.tbl_filter(function(s)
       return s.presentationHint == 'locals'
-    end, last_scopes)
+    end, last_scopes),
+    last_scopes
   )
 
   for _, s in ipairs(last_scopes) do
