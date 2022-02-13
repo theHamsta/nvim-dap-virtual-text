@@ -69,8 +69,8 @@ function M.setup(opts)
   vim.cmd [[
   highlight default link NvimDapVirtualText Comment
   highlight default link NvimDapVirtualTextChanged DiagnosticVirtualTextWarn
-  highlight default link NvimDapVirtualTextError DiagnosticsVirtualTextError
-  highlight default link NvimDapVirtualTextInfo DiagnosticsVirtualTextInfo
+  highlight default link NvimDapVirtualTextError DiagnosticVirtualTextError
+  highlight default link NvimDapVirtualTextInfo DiagnosticVirtualTextInfo
   ]]
 
   if options.enable_commands then
