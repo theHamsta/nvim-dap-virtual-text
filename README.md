@@ -11,7 +11,7 @@ This plugin adds virtual text support to [nvim-dap](https://github.com/mfusseneg
 
 The hlgroup for the virtual text is `NvimDapVirtualText` (linked to `Comment`).
 Exceptions that caused the debugger to stop are displayed as `NvimDapVirtualTextError`
-(linked to `LspDiagnosticsVirtualTextError`). Changed and new variables will be highlighted with
+(linked to `DiagnosticVirtualTextError`). Changed and new variables will be highlighted with
 `NvimDapVirtualTextChanged` (default linked to `DiagnosticVirtualTextWarn`).
 
 The behavior of this can plugin can be activated and controlled via a `setup` call
