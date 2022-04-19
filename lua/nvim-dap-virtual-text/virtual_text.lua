@@ -90,7 +90,7 @@ function M.set_virtual_text(stackframe, options)
   for _, d in pairs(definition_nodes) do
     local node = utils.get_at_path(d, 'var.node') or utils.get_at_path(d, 'parameter.node')
     if node then
-      local name = ts_utils.get_node_text(node, buf)[1]
+      local name = vim.treesitter.query.get_node_text(node, buf)
       local var_line, var_col = node:start()
 
       local evaluated = variables[name]
