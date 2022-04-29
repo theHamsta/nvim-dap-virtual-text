@@ -45,7 +45,7 @@ function M.set_virtual_text(stackframe, options)
   end
 
   local scope_nodes = locals.get_scopes(buf)
-  local definition_nodes = locals.get_definitions(buf)
+  local definition_nodes = locals.get_locals(buf)
   local variables = {}
 
   -- prefer "locals"
@@ -88,7 +88,9 @@ function M.set_virtual_text(stackframe, options)
 
   local node_ids = {}
   for _, d in pairs(definition_nodes) do
-    local node = utils.get_at_path(d, 'var.node') or utils.get_at_path(d, 'parameter.node')
+    local node = (options.all_references and utils.get_at_path(d, 'reference.node'))
+      or utils.get_at_path(d, 'definition.var.node')
+      or utils.get_at_path(d, 'definition.parameter.node')
     if node then
       local name = vim.treesitter.query.get_node_text(node, buf)
       local var_line, var_col = node:start()
@@ -109,7 +111,9 @@ function M.set_virtual_text(stackframe, options)
         end
 
         if in_scope then
-          variables[name] = nil
+          if options.only_first_definition and not options.all_references then
+            variables[name] = nil
+          end
           if not node_ids[node:id()] then
             node_ids[node:id()] = true
             local has_changed = options.highlight_changed_variables
@@ -157,7 +161,7 @@ function M.set_virtual_text(stackframe, options)
         vim.api.nvim_buf_set_extmark(buf, hl_namespace, node_range[1], node_range[2], {
           end_line = node_range[3],
           end_col = node_range[4],
-          hl_mode = "combine",
+          hl_mode = 'combine',
           virt_text = { virt_text },
           virt_text_pos = options.virt_text_pos,
           virt_text_win_col = options.virt_text_win_col and win_col,
@@ -175,7 +179,7 @@ function M.set_virtual_text(stackframe, options)
         error_msg = vim.o.commentstring:gsub('%%s', error_set)
       end
       api.nvim_buf_set_extmark(buf, hl_namespace, stopped_frame.line - 1, 0, {
-        hl_mode = "combine",
+        hl_mode = 'combine',
         virt_text = { { error_msg, 'NvimDapVirtualTextError' } },
         virt_text_pos = options.virt_text_pos,
       })
@@ -186,7 +190,7 @@ function M.set_virtual_text(stackframe, options)
         info_msg = vim.o.commentstring:gsub('%%s', info_set)
       end
       api.nvim_buf_set_extmark(buf, hl_namespace, stopped_frame.line - 1, 0, {
-        hl_mode = "combine",
+        hl_mode = 'combine',
         virt_text = { { info_msg, 'NvimDapVirtualTextInfo' } },
         virt_text_pos = options.virt_text_pos,
       })

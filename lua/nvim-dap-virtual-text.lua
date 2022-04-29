@@ -17,6 +17,8 @@ local options = {
   highlight_changed_variables = true,
   highlight_new_as_changed = false,
   show_stop_reason = true,
+  only_first_definition = true, -- only show virtual text at first definition (if there are multiple)
+  all_references = false, -- show virtual text on all all references of the variable (not only definitions)
   text_prefix = '',
   separator = ',',
   error_prefix = '  ',
@@ -36,7 +38,9 @@ function M.refresh(session)
   if not options.enabled then
     return
   end
-  if not session then return end
+  if not session then
+    return
+  end
 
   if options.all_frames and session.threads and session.threads[session.stopped_thread_id] then
     local frames = session.threads[session.stopped_thread_id].frames
