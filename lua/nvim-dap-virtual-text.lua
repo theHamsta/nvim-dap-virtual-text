@@ -27,6 +27,7 @@ local options = {
   virt_lines = false,
   virt_lines_above = true,
   virt_text_win_col = nil,
+  filter_references_pattern = '<module', -- filter references pattern (Lua gmatch pattern)
 }
 
 function M.refresh(session)

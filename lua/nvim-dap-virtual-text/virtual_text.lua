@@ -97,7 +97,10 @@ function M.set_virtual_text(stackframe, options)
 
       local evaluated = variables[name]
       local last_value = last_variables[name]
-      if evaluated then -- evaluated local with same name exists
+      if
+        evaluated
+        and not (options.filter_references_pattern and evaluated.value:find(options.filter_references_pattern))
+      then -- evaluated local with same name exists
         -- is this name really the local or is it in another scope?
         local in_scope = true
         for _, scope in ipairs(scope_nodes) do
@@ -144,6 +147,16 @@ function M.set_virtual_text(stackframe, options)
   end
 
   for line, content in pairs(virt_lines) do
+    -- Filtering necessary with all_references: there can be more than on reference on one line
+    if options.all_references then
+      local avoid_duplicates = {}
+      content = vim.tbl_filter(function(content)
+        local text = content[1]
+        local was_duplicate = avoid_duplicates[text]
+        avoid_duplicates[text] = true
+        return not was_duplicate
+      end, content)
+    end
     if options.virt_lines then
       vim.api.nvim_buf_set_extmark(buf, hl_namespace, line, 0, {
         virt_lines = { content },
