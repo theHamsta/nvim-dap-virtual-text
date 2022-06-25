@@ -150,8 +150,8 @@ function M.set_virtual_text(stackframe, options)
     -- Filtering necessary with all_references: there can be more than on reference on one line
     if options.all_references then
       local avoid_duplicates = {}
-      content = vim.tbl_filter(function(content)
-        local text = content[1]
+      content = vim.tbl_filter(function(c)
+        local text = c[1]
         local was_duplicate = avoid_duplicates[text]
         avoid_duplicates[text] = true
         return not was_duplicate
