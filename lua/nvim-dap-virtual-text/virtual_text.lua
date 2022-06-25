@@ -21,6 +21,24 @@ local info_set
 local stopped_frame
 local last_frames = {}
 
+local function variables_from_scopes(scopes, lang)
+  local variables = {}
+
+  local scopes = scopes or {}
+  for _, s in ipairs(scopes) do
+    if s.variables then
+      for _, v in pairs(s.variables) do
+        local key = lang == 'php' and v.name:gsub('^%$', '') or v.name
+        -- prefer "locals"
+        if not variables[key] or variables[key].presentationHint ~= 'locals' then
+          variables[key] = { value = v, presentationHint = s.presentationHint }
+        end
+      end
+    end
+  end
+  return variables
+end
+
 function M.set_virtual_text(stackframe, options)
   if not stackframe then
     return
@@ -46,44 +64,24 @@ function M.set_virtual_text(stackframe, options)
 
   local scope_nodes = locals.get_scopes(buf)
   local definition_nodes = locals.get_locals(buf)
-  local variables = {}
+  local variables = variables_from_scopes(stackframe.scopes)
 
-  -- prefer "locals"
   local scopes = stackframe.scopes or {}
-  scopes = vim.list_extend(
-    vim.tbl_filter(function(s)
-      return s.presentationHint == 'locals'
-    end, scopes),
-    scopes
-  )
   for _, s in ipairs(scopes) do
     if s.variables then
       for _, v in pairs(s.variables) do
-        if lang == 'php' then
-          variables[v.name:gsub('^%$', '')] = v
-        else
-          variables[v.name] = v
+        local key = lang == 'php' and v.name:gsub('^%$', '') or v.name
+        -- prefer "locals"
+        if not variables[key] or variables[key].presentationHint ~= 'locals' then
+          variables[key] = { value = v, presentationHint = s.presentationHint }
         end
       end
     end
   end
 
-  local last_variables = {}
   local last_scopes = last_frames[stackframe.id] and last_frames[stackframe.id].scopes or {}
-  last_scopes = vim.list_extend(
-    vim.tbl_filter(function(s)
-      return s.presentationHint == 'locals'
-    end, last_scopes),
-    last_scopes
-  )
+  local last_variables = variables_from_scopes(last_scopes)
 
-  for _, s in ipairs(last_scopes) do
-    if s.variables then
-      for _, v in pairs(s.variables) do
-        last_variables[v.name] = v
-      end
-    end
-  end
   local virt_lines = {}
 
   local node_ids = {}
@@ -96,7 +94,9 @@ function M.set_virtual_text(stackframe, options)
       local var_line, var_col = node:start()
 
       local evaluated = variables[name]
+      evaluated = evaluated and evaluated.value
       local last_value = last_variables[name]
+      last_value = last_value and last_value.value
       if
         evaluated
         and not (options.filter_references_pattern and evaluated.value:find(options.filter_references_pattern))
@@ -158,10 +158,13 @@ function M.set_virtual_text(stackframe, options)
       end, content)
     end
     if options.virt_lines then
-      vim.api.nvim_buf_set_extmark(buf, hl_namespace, line, 0, {
-        virt_lines = { content },
-        virt_lines_above = options.virt_lines_above,
-      })
+      vim.api.nvim_buf_set_extmark(
+        buf,
+        hl_namespace,
+        line,
+        0,
+        { virt_lines = { content }, virt_lines_above = options.virt_lines_above }
+      )
     else
       local line_text = api.nvim_buf_get_lines(buf, line, line + 1, true)[1]
       local win_col = math.max(options.virt_text_win_col or 0, #line_text + 1)
