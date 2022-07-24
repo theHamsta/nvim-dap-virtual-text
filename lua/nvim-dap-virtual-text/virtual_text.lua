@@ -194,7 +194,7 @@ function M.set_virtual_text(stackframe, options)
       if options.commented then
         error_msg = vim.o.commentstring:gsub('%%s', error_set)
       end
-      api.nvim_buf_set_extmark(buf, hl_namespace, stopped_frame.line - 1, 0, {
+      pcall(api.nvim_buf_set_extmark, buf, hl_namespace, stopped_frame.line - 1, 0, {
         hl_mode = 'combine',
         virt_text = { { error_msg, 'NvimDapVirtualTextError' } },
         virt_text_pos = options.virt_text_pos,
@@ -205,7 +205,7 @@ function M.set_virtual_text(stackframe, options)
       if options.commented then
         info_msg = vim.o.commentstring:gsub('%%s', info_set)
       end
-      api.nvim_buf_set_extmark(buf, hl_namespace, stopped_frame.line - 1, 0, {
+      pcall(api.nvim_buf_set_extmark, buf, hl_namespace, stopped_frame.line - 1, 0, {
         hl_mode = 'combine',
         virt_text = { { info_msg, 'NvimDapVirtualTextInfo' } },
         virt_text_pos = options.virt_text_pos,
