@@ -9,25 +9,43 @@ local M = {}
 local dap = require 'dap'
 
 local plugin_id = 'nvim-dap-virtual-text'
+
+---@class nvim_dap_virtual_text_options
 local options = {
+  -- enable this plugin (the default)
   enabled = true,
+  -- create commands `DapVirtualTextEnable`, `DapVirtualTextDisable`, `DapVirtualTextToggle`,
+  -- (`DapVirtualTextForceRefresh` for refreshing when debug adapter did not notify its termination)
   enable_commands = true,
+  -- show virtual text for all stack frames not only current. Only works for debugpy on my machine.
   all_frames = false,
+  -- prefix virtual text with comment string
   commented = false,
+  -- highlight changed values with `NvimDapVirtualTextChanged`, else always `NvimDapVirtualText`
   highlight_changed_variables = true,
+  -- highlight new variables in the same way as changed variables (if highlight_changed_variables)
   highlight_new_as_changed = false,
+  -- show stop reason when stopped for exceptions
   show_stop_reason = true,
-  only_first_definition = true, -- only show virtual text at first definition (if there are multiple)
-  all_references = false, -- show virtual text on all all references of the variable (not only definitions)
+  -- only show virtual text at first definition (if there are multiple)
+  only_first_definition = true,
+  -- show virtual text on all all references of the variable (not only definitions)
+  all_references = false,
   text_prefix = '',
   separator = ',',
   error_prefix = '  ',
   info_prefix = '  ',
+  -- position of virtual text, see `:h nvim_buf_set_extmark()`
   virt_text_pos = 'eol',
+  -- show virtual lines instead of virtual text (will flicker!)
   virt_lines = false,
   virt_lines_above = true,
+  -- position the virtual text at a fixed window column (starting from the first text column) ,
+  -- e.g. `80` to position at column `80`, see `:h nvim_buf_set_extmark()`
   virt_text_win_col = nil,
-  filter_references_pattern = '<module', -- filter references pattern (Lua gmatch pattern)
+  -- filter references (not definitions) pattern when `all_references` is activated
+  -- (Lua gmatch pattern, default filters out Python modules)
+  filter_references_pattern = '<module',
 }
 
 function M.refresh(session)
@@ -68,7 +86,9 @@ function M.disable()
   M.refresh()
 end
 
+---@param opts nvim_dap_virtual_text_options
 function M.setup(opts)
+  ---@type nvim_dap_virtual_text_options
   options = vim.tbl_deep_extend('force', options, opts or {})
 
   vim.cmd [[
