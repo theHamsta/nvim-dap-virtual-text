@@ -63,7 +63,7 @@ function M.refresh(session)
 
   if options.all_frames and session.threads and session.threads[session.stopped_thread_id] then
     local frames = session.threads[session.stopped_thread_id].frames
-    for _, f in pairs(frames) do
+    for _, f in pairs(frames or {}) do
       virtual_text.set_virtual_text(f, options)
     end
   else
