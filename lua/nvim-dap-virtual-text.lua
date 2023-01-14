@@ -46,7 +46,7 @@ local options = {
   -- filter references (not definitions) pattern when `all_references` is activated
   -- (Lua gmatch pattern, default filters out Python modules)
   filter_references_pattern = '<module',
-  --- A callback that determines how a variable is displayed
+  --- A callback that determines how a variable is displayed or whether it should be omitted
   --- @param variable table https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
   --- @param buf number
   --- @param stackframe table https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
