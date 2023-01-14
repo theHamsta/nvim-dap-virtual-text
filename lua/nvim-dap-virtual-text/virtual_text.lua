@@ -18,7 +18,9 @@ local _, queries = pcall(require, 'nvim-treesitter.query')
 local hl_namespace = api.nvim_create_namespace 'nvim-dap-virtual-text'
 local error_set
 local info_set
+---@type dap.StackFrame|nil
 local stopped_frame
+---@type dap.StackFrame[]
 local last_frames = {}
 
 local function variables_from_scopes(scopes, lang)
@@ -39,7 +41,26 @@ local function variables_from_scopes(scopes, lang)
   return variables
 end
 
----@param stackframe table
+---@class Scope
+---@field name string
+---@field presentationHint 'arguments' | 'locals' | 'registers' | string | nil
+---@field variablesReference number
+---@field namedVariables number|nil
+---@field indexedVariables number|nil
+---@field expensive boolean
+---@field source dap.Source|nil
+---@field line number|nil
+---@field column number|nil
+---@field endLine number|nil
+---@field endColumn number|nil
+--- nvim-dap internal
+---@field variables table<string,Variable>
+
+---@class dap.StackFrame
+--- nvim-dap internal
+---@field scopes Scope[]
+
+---@param stackframe dap.StackFrame
 ---@param options nvim_dap_virtual_text_options
 function M.set_virtual_text(stackframe, options)
   if not stackframe then
@@ -219,14 +240,17 @@ function M.set_virtual_text(stackframe, options)
   end
 end
 
+---@param options nvim_dap_virtual_text_options
 function M.set_info(message, options)
   info_set = options.info_prefix .. message
 end
 
+---@param frame dap.StackFrame
 function M.set_stopped_frame(frame)
   stopped_frame = frame
 end
 
+---@param options nvim_dap_virtual_text_options
 function M.set_error(response, options)
   if response then
     local exception_type = response.details and response.details.typeName
@@ -244,6 +268,7 @@ function M._on_continue()
   M.clear_virtual_text()
 end
 
+---@param stackframe dap.StackFrame|nil
 function M.clear_virtual_text(stackframe)
   if stackframe then
     local buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
@@ -255,6 +280,7 @@ function M.clear_virtual_text(stackframe)
   end
 end
 
+---@param threads dap.Thread[]
 function M.set_last_frames(threads)
   for _, t in pairs(threads or {}) do
     for _, f in pairs(t.frames or {}) do
