@@ -124,7 +124,7 @@ function M.set_virtual_text(stackframe, options)
             local has_changed = options.highlight_changed_variables
               and (evaluated.value ~= (last_value and last_value.value))
               and (options.highlight_new_as_changed or last_value)
-            local text = options.display_callback(evaluated, buf, stackframe)
+            local text = options.display_callback(evaluated, buf, stackframe, node)
             if text then
               if options.commented then
                 text = vim.o.commentstring:gsub('%%s', { ['%s'] = text })

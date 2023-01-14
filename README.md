@@ -43,8 +43,9 @@ require("nvim-dap-virtual-text").setup {
     --- @param variable table https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
     --- @param buf number
     --- @param stackframe table https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
+    --- @param node userdata tree-sitter node identified as variable definition of reference (see `:h tsnode`)
     --- @return string|nil A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
-    display_callback = function(variable, _buf, _stackframe)
+    display_callback = function(variable, _buf, _stackframe, _node)
       return variable.name .. ' = ' .. variable.value
     end,
 
