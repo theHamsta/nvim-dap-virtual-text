@@ -39,6 +39,8 @@ local function variables_from_scopes(scopes, lang)
   return variables
 end
 
+---@param stackframe table
+---@param options nvim_dap_virtual_text_options
 function M.set_virtual_text(stackframe, options)
   if not stackframe then
     return
@@ -122,24 +124,26 @@ function M.set_virtual_text(stackframe, options)
             local has_changed = options.highlight_changed_variables
               and (evaluated.value ~= (last_value and last_value.value))
               and (options.highlight_new_as_changed or last_value)
-            local text = name .. ' = ' .. evaluated.value
-            if options.commented then
-              text = vim.o.commentstring:gsub('%%s', { ['%s'] = text })
-            end
-            text = options.text_prefix .. text
-
-            if virt_lines[node:start()] then
-              if options.virt_lines then
-                text = ' ' .. options.separator .. text
+            local text = options.display_callback(evaluated, buf, stackframe)
+            if text then
+              if options.commented then
+                text = vim.o.commentstring:gsub('%%s', { ['%s'] = text })
               end
-            else
-              virt_lines[node:start()] = {}
+              text = options.text_prefix .. text
+
+              if virt_lines[node:start()] then
+                if options.virt_lines then
+                  text = ' ' .. options.separator .. text
+                end
+              else
+                virt_lines[node:start()] = {}
+              end
+              table.insert(virt_lines[node:start()], {
+                text,
+                has_changed and 'NvimDapVirtualTextChanged' or 'NvimDapVirtualText',
+                node = node,
+              })
             end
-            table.insert(virt_lines[node:start()], {
-              text,
-              has_changed and 'NvimDapVirtualTextChanged' or 'NvimDapVirtualText',
-              node = node,
-            })
           end
         end
       end

@@ -46,6 +46,15 @@ local options = {
   -- filter references (not definitions) pattern when `all_references` is activated
   -- (Lua gmatch pattern, default filters out Python modules)
   filter_references_pattern = '<module',
+  --- A callback that determines how a variable is displayed
+  --- @param variable table https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
+  --- @param buf number
+  --- @param stackframe table https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
+  --- @return string|nil A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
+  --- @diagnostic disable-next-line: unused-local
+  display_callback = function(variable, buf, stackframe)
+    return variable.name .. ' = ' .. variable.value
+  end,
 }
 
 function M.refresh(session)
