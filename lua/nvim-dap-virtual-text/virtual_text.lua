@@ -101,6 +101,7 @@ function M.set_virtual_text(stackframe, options)
       last_value = last_value and last_value.value
       if
         evaluated
+        ---@diagnostic disable-next-line: deprecated
         and not (options.filter_references_pattern and evaluated.value:find(options.filter_references_pattern))
       then -- evaluated local with same name exists
         -- is this name really the local or is it in another scope?

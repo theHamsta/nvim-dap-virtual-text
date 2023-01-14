@@ -45,6 +45,7 @@ local options = {
   virt_text_win_col = nil,
   -- filter references (not definitions) pattern when `all_references` is activated
   -- (Lua gmatch pattern, default filters out Python modules)
+  --- @deprecated Use display_callback instead with nil return value instead!
   filter_references_pattern = '<module',
   --- A callback that determines how a variable is displayed or whether it should be omitted
   --- @param variable table https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
