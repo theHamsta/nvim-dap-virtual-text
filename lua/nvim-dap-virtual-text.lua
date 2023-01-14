@@ -50,9 +50,10 @@ local options = {
   --- @param variable table https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
   --- @param buf number
   --- @param stackframe table https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
+  --- @param node userdata tree-sitter node identified as variable definition of reference (see `:h tsnode`)
   --- @return string|nil A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
   --- @diagnostic disable-next-line: unused-local
-  display_callback = function(variable, buf, stackframe)
+  display_callback = function(variable, buf, stackframe, node)
     return variable.name .. ' = ' .. variable.value
   end,
 }
