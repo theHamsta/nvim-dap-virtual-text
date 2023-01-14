@@ -46,6 +46,14 @@ require("nvim-dap-virtual-text").setup {
     virt_lines = false,                    -- show virtual lines instead of virtual text (will flicker!)
     virt_text_win_col = nil                -- position the virtual text at a fixed window column (starting from the first text column) ,
                                            -- e.g. 80 to position at column 80, see `:h nvim_buf_set_extmark()`
+    --- A callback that determines how a variable is displayed
+    --- @param variable table https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
+    --- @param buf number
+    --- @param stackframe table https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
+    --- @return string|nil A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
+    display_callback = function(variable, _buf, _stackframe)
+      return variable.name .. ' = ' .. variable.value
+    end,
 }
 ```
 
