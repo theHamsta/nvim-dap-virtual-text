@@ -124,7 +124,7 @@ function M.set_virtual_text(stackframe, options)
               and (options.highlight_new_as_changed or last_value)
             local text = name .. ' = ' .. evaluated.value
             if options.commented then
-              text = vim.o.commentstring:gsub('%%s', text)
+              text = vim.o.commentstring:gsub('%%s', { ['%s'] = text })
             end
             text = options.text_prefix .. text
 
@@ -192,7 +192,7 @@ function M.set_virtual_text(stackframe, options)
     if error_set then
       local error_msg = error_set
       if options.commented then
-        error_msg = vim.o.commentstring:gsub('%%s', error_set)
+        error_msg = vim.o.commentstring:gsub('%%s', { ['%s'] = error_set })
       end
       pcall(api.nvim_buf_set_extmark, buf, hl_namespace, stopped_frame.line - 1, 0, {
         hl_mode = 'combine',
@@ -203,7 +203,7 @@ function M.set_virtual_text(stackframe, options)
     if info_set then
       local info_msg = info_set
       if options.commented then
-        info_msg = vim.o.commentstring:gsub('%%s', info_set)
+        info_msg = vim.o.commentstring:gsub('%%s', { ['%s'] = info_set })
       end
       pcall(api.nvim_buf_set_extmark, buf, hl_namespace, stopped_frame.line - 1, 0, {
         hl_mode = 'combine',
