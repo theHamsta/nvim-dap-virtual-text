@@ -7,7 +7,7 @@ jobs:
     name: Luacheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       - name: Prepare
         run: |
@@ -23,9 +23,10 @@ jobs:
     name: StyLua
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Lint with stylua
-      uses: JohnnyMorganz/stylua-action@1.0.0
+      uses: JohnnyMorganz/stylua-action@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        version: latest
         args: --check .
