@@ -10,6 +10,31 @@ local dap = require 'dap'
 
 local plugin_id = 'nvim-dap-virtual-text'
 
+---@class VariablePresentationHint
+---@field kind 'property' | 'method' | 'class' | 'data' | 'event' | 'baseClass' | 'innerClass' | 'interface'
+--- | 'mostDerivedClass'
+--- | 'virtual'
+--- | 'dataBreakpoint'
+--- | string
+--- | nil
+---@field attributes ('static' | 'constant' | 'readOnly' | 'rawString' | 'hasObjectId' | 'canHaveObjectId'
+--- | 'hasSideEffects'
+--- | 'hasDataBreakpoint'
+--- | string)[] | nil
+---@field visibility 'public' | 'private' | 'protected' | 'internal' | 'final' | string | nil
+---@field lazy boolean|nil
+
+--- @class Variable
+--- @field name string
+--- @field value string
+--- @field type string|nil
+--- @field presentationHint VariablePresentationHint|nil
+--- @field evaluateName string|nil
+--- @field variablesReference number
+--- @field namedVariables number|nil
+--- @field indexedVariables number|nil
+--- @field memoryReference string|nil
+
 ---@class nvim_dap_virtual_text_options
 local options = {
   -- enable this plugin (the default)
@@ -48,9 +73,9 @@ local options = {
   --- @deprecated Use display_callback instead with nil return value instead!
   filter_references_pattern = '<module',
   --- A callback that determines how a variable is displayed or whether it should be omitted
-  --- @param variable table https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
+  --- @param variable Variable https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
   --- @param buf number
-  --- @param stackframe table https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
+  --- @param stackframe dap.StackFrame https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
   --- @param node userdata tree-sitter node identified as variable definition of reference (see `:h tsnode`)
   --- @return string|nil A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
   --- @diagnostic disable-next-line: unused-local
