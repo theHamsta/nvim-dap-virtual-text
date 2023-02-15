@@ -13,6 +13,13 @@ local require_ok, locals = pcall(require, 'nvim-treesitter.locals')
 local _, utils = pcall(require, 'nvim-treesitter.utils')
 local _, parsers = pcall(require, 'nvim-treesitter.parsers')
 local _, queries = pcall(require, 'nvim-treesitter.query')
+local is_in_node_range
+if vim.treesitter.is_in_node_range then
+  is_in_node_range = vim.treesitter.is_in_node_range
+else
+  local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
+  is_in_node_range = ts_utils.is_in_node_range
+end
 
 local hl_namespace = api.nvim_create_namespace 'nvim-dap-virtual-text'
 local error_set
@@ -127,10 +134,7 @@ function M.set_virtual_text(stackframe, options)
         -- is this name really the local or is it in another scope?
         local in_scope = true
         for _, scope in ipairs(scope_nodes) do
-          if
-            vim.treesitter.is_in_node_range(scope, var_line, var_col)
-            and not vim.treesitter.is_in_node_range(scope, stackframe.line - 1, 0)
-          then
+          if is_in_node_range(scope, var_line, var_col) and not is_in_node_range(scope, stackframe.line - 1, 0) then
             in_scope = false
             break
           end
