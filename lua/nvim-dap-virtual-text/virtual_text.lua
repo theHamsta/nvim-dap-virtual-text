@@ -10,7 +10,6 @@ local M = {}
 local api = vim.api
 
 local require_ok, locals = pcall(require, 'nvim-treesitter.locals')
-local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 local _, utils = pcall(require, 'nvim-treesitter.utils')
 local _, parsers = pcall(require, 'nvim-treesitter.parsers')
 local _, queries = pcall(require, 'nvim-treesitter.query')
@@ -129,8 +128,8 @@ function M.set_virtual_text(stackframe, options)
         local in_scope = true
         for _, scope in ipairs(scope_nodes) do
           if
-            ts_utils.is_in_node_range(scope, var_line, var_col)
-            and not ts_utils.is_in_node_range(scope, stackframe.line - 1, 0)
+            vim.treesitter.is_in_node_range(scope, var_line, var_col)
+            and not vim.treesitter.is_in_node_range(scope, stackframe.line - 1, 0)
           then
             in_scope = false
             break
