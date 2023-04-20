@@ -4,9 +4,9 @@ This plugin adds virtual text support to [nvim-dap](https://github.com/mfusseneg
 [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) is used to find variable definitions.
 
 ```vim
-    Plug 'mfussenegger/nvim-dap'
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-    Plug 'theHamsta/nvim-dap-virtual-text'
+Plug 'mfussenegger/nvim-dap'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'theHamsta/nvim-dap-virtual-text'
 ```
 
 The hlgroup for the virtual text is `NvimDapVirtualText` (linked to `Comment`).
