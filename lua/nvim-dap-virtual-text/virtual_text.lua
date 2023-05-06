@@ -68,7 +68,8 @@ end
 
 ---@param stackframe dap.StackFrame
 ---@param options nvim_dap_virtual_text_options
-function M.set_virtual_text(stackframe, options)
+---@param clear boolean
+function M.set_virtual_text(stackframe, options, clear)
   if not stackframe then
     return
   end
@@ -175,6 +176,10 @@ function M.set_virtual_text(stackframe, options)
         end
       end
     end
+  end
+
+  if clear then
+    M.clear_virtual_text(stackframe)
   end
 
   for line, content in pairs(virt_lines) do
