@@ -108,6 +108,7 @@ function M.set_virtual_text(stackframe, options)
     end
   end
 
+  local inline = options.virt_text_pos == 'inline'
   local last_scopes = last_frames[stackframe.id] and last_frames[stackframe.id].scopes or {}
   local last_variables = variables_from_scopes(last_scopes)
 
@@ -150,7 +151,7 @@ function M.set_virtual_text(stackframe, options)
             local has_changed = options.highlight_changed_variables
               and (evaluated.value ~= (last_value and last_value.value))
               and (options.highlight_new_as_changed or last_value)
-            local text = options.display_callback(evaluated, buf, stackframe, node)
+            local text = options.display_callback(evaluated, buf, stackframe, node, options)
             if text then
               if options.commented then
                 text = vim.o.commentstring:gsub('%%s', { ['%s'] = text })
@@ -200,11 +201,11 @@ function M.set_virtual_text(stackframe, options)
       local win_col = math.max(options.virt_text_win_col or 0, #line_text + 1)
       for i, virt_text in ipairs(content) do
         local node_range = { virt_text.node:range() }
-        if i < #content then
+        if i < #content and not inline then
           virt_text[1] = virt_text[1] .. options.separator
         end
         virt_text.node = nil
-        vim.api.nvim_buf_set_extmark(buf, hl_namespace, node_range[1], node_range[2], {
+        vim.api.nvim_buf_set_extmark(buf, hl_namespace, node_range[inline and 3 or 1], node_range[inline and 4 or 2], {
           end_line = node_range[3],
           end_col = node_range[4],
           hl_mode = 'combine',
@@ -227,7 +228,7 @@ function M.set_virtual_text(stackframe, options)
       pcall(api.nvim_buf_set_extmark, buf, hl_namespace, stopped_frame.line - 1, 0, {
         hl_mode = 'combine',
         virt_text = { { error_msg, 'NvimDapVirtualTextError' } },
-        virt_text_pos = options.virt_text_pos,
+        virt_text_pos = inline and 'eos' or options.virt_text_pos,
       })
     end
     if info_set then
@@ -238,7 +239,7 @@ function M.set_virtual_text(stackframe, options)
       pcall(api.nvim_buf_set_extmark, buf, hl_namespace, stopped_frame.line - 1, 0, {
         hl_mode = 'combine',
         virt_text = { { info_msg, 'NvimDapVirtualTextInfo' } },
-        virt_text_pos = options.virt_text_pos,
+        virt_text_pos = inline and 'eos' or options.virt_text_pos,
       })
     end
   end

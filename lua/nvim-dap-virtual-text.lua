@@ -61,7 +61,7 @@ local options = {
   error_prefix = '  ',
   info_prefix = '  ',
   -- position of virtual text, see `:h nvim_buf_set_extmark()`
-  virt_text_pos = 'eol',
+  virt_text_pos = vim.fn.has 'nvim-0.10' == 1 and 'inline' or 'eol',
   -- show virtual lines instead of virtual text (will flicker!)
   virt_lines = false,
   virt_lines_above = true,
@@ -77,10 +77,15 @@ local options = {
   --- @param buf number
   --- @param stackframe dap.StackFrame https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
   --- @param node userdata tree-sitter node identified as variable definition of reference (see `:h tsnode`)
+  --- @param options nvim_dap_virtual_text_options Current options for nvim-dap-virtual-text
   --- @return string|nil A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
   --- @diagnostic disable-next-line: unused-local
-  display_callback = function(variable, buf, stackframe, node)
-    return variable.name .. ' = ' .. variable.value
+  display_callback = function(variable, buf, stackframe, node, options)
+    if options.virt_text_pos == 'inline' then
+      return ' = ' .. variable.value
+    else
+      return variable.name .. ' = ' .. variable.value
+    end
   end,
 }
 
