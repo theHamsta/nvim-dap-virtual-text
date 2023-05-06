@@ -56,6 +56,8 @@ local options = {
   only_first_definition = true,
   -- show virtual text on all all references of the variable (not only definitions)
   all_references = false,
+  -- clear virtual text on "continue" (might cause flickering when stepping)
+  clear_on_continue = false,
   text_prefix = '',
   separator = ',',
   error_prefix = '  ',
@@ -150,12 +152,12 @@ function M.setup(opts)
 
   local function on_continue()
     local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
-    virtual_text._on_continue()
+    virtual_text._on_continue(options)
   end
 
   local function on_exit()
     local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
-    virtual_text._on_continue()
+    virtual_text.clear_virtual_text()
     virtual_text.clear_last_frames()
   end
 

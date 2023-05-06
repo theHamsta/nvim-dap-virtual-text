@@ -39,6 +39,7 @@ require("nvim-dap-virtual-text").setup {
     commented = false,                     -- prefix virtual text with comment string
     only_first_definition = true,          -- only show virtual text at first definition (if there are multiple)
     all_references = false,                -- show virtual text on all all references of the variable (not only definitions)
+    clear_on_continue = false,             -- clear virtual text on "continue" (might cause flickering when stepping)
     --- A callback that determines how a variable is displayed or whether it should be omitted
     --- @param variable Variable https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable
     --- @param buf number
