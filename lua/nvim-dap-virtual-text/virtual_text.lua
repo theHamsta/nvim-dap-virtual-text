@@ -266,11 +266,14 @@ function M.set_error(response, options)
   end
 end
 
-function M._on_continue()
+function M._on_continue(options)
   error_set = nil
   info_set = nil
   stopped_frame = nil
-  M.clear_virtual_text()
+
+  if options.clear_on_continue then
+    M.clear_virtual_text()
+  end
 end
 
 ---@param stackframe dap.StackFrame|nil
