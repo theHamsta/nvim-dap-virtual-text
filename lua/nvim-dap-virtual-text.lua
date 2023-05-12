@@ -202,7 +202,7 @@ function M.setup(opts)
           -- since a function can be evaluated in multiple frames.
           if not requested_functions[f.name] then
             if not f.scopes or #f.scopes == 0 then
-              session:_request_scopes(f)
+              pcall(session._request_scopes, session, f)
             end
             requested_functions[f.name] = true
           end
