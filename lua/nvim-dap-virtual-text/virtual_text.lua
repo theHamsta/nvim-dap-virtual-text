@@ -9,10 +9,10 @@ local M = {}
 
 local api = vim.api
 
-local require_ok, locals = pcall(require, 'nvim-treesitter.locals')
-local _, utils = pcall(require, 'nvim-treesitter.utils')
-local _, parsers = pcall(require, 'nvim-treesitter.parsers')
-local _, queries = pcall(require, 'nvim-treesitter.query')
+local require_ok, parsers = pcall(require, 'nvim-treesitter.parsers')
+local ts = vim.treesitter
+local tsq = ts.query
+
 local is_in_node_range
 if vim.treesitter.is_in_node_range then
   is_in_node_range = vim.treesitter.is_in_node_range
@@ -32,7 +32,7 @@ local last_frames = {}
 local function variables_from_scopes(scopes, lang)
   local variables = {}
 
-  local scopes = scopes or {}
+  scopes = scopes or {}
   for _, s in ipairs(scopes) do
     if s.variables then
       for _, v in pairs(s.variables) do
@@ -45,6 +45,10 @@ local function variables_from_scopes(scopes, lang)
     end
   end
   return variables
+end
+
+local function get_query(lang, query_name)
+  return (tsq.get or tsq.get_query)(lang, query_name)
 end
 
 ---@class Scope
@@ -88,12 +92,33 @@ function M.set_virtual_text(stackframe, options, clear)
   local buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
   local lang = parsers.get_buf_lang(buf)
 
-  if not parsers.has_parser(lang) or not queries.has_locals(lang) then
+  if not parsers.has_parser(lang) or not get_query(lang, 'locals') then
     return
   end
 
-  local scope_nodes = locals.get_scopes(buf)
-  local definition_nodes = locals.get_locals(buf)
+  local scope_nodes = {}
+  local definition_nodes = {}
+
+  local parser = vim.treesitter.get_parser(buf)
+  parser:parse()
+  parser:for_each_tree(function(tree, _)
+    local query = get_query(lang, 'locals')
+    if query then
+      for _, match, _ in query:iter_matches(tree:root(), buf, 0, -1) do
+        for id, node in pairs(match) do
+          local cap_id = query.captures[id]
+          if cap_id == 'scope' then
+            table.insert(scope_nodes, node)
+          elseif cap_id:find('definition', 1, true) then
+            table.insert(definition_nodes, node)
+          elseif options.all_references and cap_id:find('reference', 1, true) then
+            table.insert(definition_nodes, node)
+          end
+        end
+      end
+    end
+  end)
+
   local variables = variables_from_scopes(stackframe.scopes)
 
   local scopes = stackframe.scopes or {}
@@ -116,10 +141,7 @@ function M.set_virtual_text(stackframe, options, clear)
   local virt_lines = {}
 
   local node_ids = {}
-  for _, d in pairs(definition_nodes) do
-    local node = (options.all_references and utils.get_at_path(d, 'reference.node'))
-      or utils.get_at_path(d, 'definition.var.node')
-      or utils.get_at_path(d, 'definition.parameter.node')
+  for _, node in pairs(definition_nodes) do
     if node then
       local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
       local name = get_node_text(node, buf)
