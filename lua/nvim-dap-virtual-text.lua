@@ -80,7 +80,7 @@ local options = {
   --- @param stackframe dap.StackFrame https://microsoft.github.io/debug-adapter-protocol/specification#Types_StackFrame
   --- @param node userdata tree-sitter node identified as variable definition of reference (see `:h tsnode`)
   --- @param options nvim_dap_virtual_text_options Current options for nvim-dap-virtual-text
-  --- @return string|nil A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
+  --- @return string|nil text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
   --- @diagnostic disable-next-line: unused-local
   display_callback = function(variable, buf, stackframe, node, options)
     if options.virt_text_pos == 'inline' then
