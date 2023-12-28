@@ -9,7 +9,6 @@ local M = {}
 
 local api = vim.api
 
-local require_ok, parsers = pcall(require, 'nvim-treesitter.parsers')
 local ts = vim.treesitter
 local tsq = ts.query
 
@@ -80,9 +79,6 @@ function M.set_virtual_text(stackframe, options, clear)
   if not stackframe.scopes then
     return
   end
-  if not require_ok then
-    return
-  end
   if not stackframe.source then
     return
   end
@@ -90,19 +86,29 @@ function M.set_virtual_text(stackframe, options, clear)
     return
   end
   local buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
-  local lang = parsers.get_buf_lang(buf)
-
-  if not parsers.has_parser(lang) or not get_query(lang, 'locals') then
-    return
+  local parser
+  local lang
+  if vim.treesitter.get_parser and vim.treesitter.language and vim.treesitter.language.get_lang then
+    lang = vim.treesitter.language.get_lang(vim.bo[buf].ft)
+    parser = vim.treesitter.get_parser(buf)
+  else
+    local require_ok, parsers = pcall(require, 'nvim-treesitter.parsers')
+    if not require_ok then
+      return
+    end
+    lang = parsers.get_buf_lang(buf)
+    parser = parsers.get_parser(buf, lang)
   end
 
   local scope_nodes = {}
   local definition_nodes = {}
 
-  local parser = vim.treesitter.get_parser(buf)
+  if not parser then
+    return
+  end
   parser:parse()
-  parser:for_each_tree(function(tree, _)
-    local query = get_query(lang, 'locals')
+  parser:for_each_tree(function(tree, ltree)
+    local query = get_query(ltree:lang(), 'locals')
     if query then
       for _, match, _ in query:iter_matches(tree:root(), buf, 0, -1) do
         for id, node in pairs(match) do
