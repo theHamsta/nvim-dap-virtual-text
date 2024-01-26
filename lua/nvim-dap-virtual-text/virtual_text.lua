@@ -311,7 +311,7 @@ function M._on_continue(options)
   info_set = nil
   stopped_frame = nil
 
-  if options.clear_on_continue then
+  if type(options) == 'table' and options.clear_on_continue then
     M.clear_virtual_text()
   end
 end
