@@ -83,6 +83,7 @@ local options = {
   --- @return string|nil text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
   --- @diagnostic disable-next-line: unused-local
   display_callback = function(variable, buf, stackframe, node, options)
+    if variable.value == '' then return end
     if options.virt_text_pos == 'inline' then
       return ' = ' .. variable.value
     else
