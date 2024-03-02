@@ -88,9 +88,16 @@ function M.set_virtual_text(stackframe, options, clear)
   local buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
   local parser
   local lang
+  local ft = vim.bo[buf].ft
+  if ft == '' then
+    ft = vim.filetype.match { buf = buf }
+    if ft == '' then
+      return
+    end
+  end
   if vim.treesitter.get_parser and vim.treesitter.language and vim.treesitter.language.get_lang then
-    lang = vim.treesitter.language.get_lang(vim.bo[buf].ft)
-    parser = vim.treesitter.get_parser(buf)
+    lang = vim.treesitter.language.get_lang(ft)
+    parser = vim.treesitter.get_parser(buf, lang)
   else
     local require_ok, parsers = pcall(require, 'nvim-treesitter.parsers')
     if not require_ok then
