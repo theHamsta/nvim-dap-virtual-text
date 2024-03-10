@@ -229,6 +229,9 @@ function M.set_virtual_text(stackframe, options, clear)
       end, content)
     end
     if options.virt_lines then
+      for _, virt_text in ipairs(content) do
+        virt_text.node = nil
+      end
       vim.api.nvim_buf_set_extmark(
         buf,
         hl_namespace,
