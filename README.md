@@ -14,7 +14,7 @@ Exceptions that caused the debugger to stop are displayed as `NvimDapVirtualText
 (linked to `DiagnosticVirtualTextError`). Changed and new variables will be highlighted with
 `NvimDapVirtualTextChanged` (default linked to `DiagnosticVirtualTextWarn`).
 
-The behavior of this can plugin can be activated and controlled via a `setup` call
+The behavior of this plugin can be activated and controlled via a `setup` call
 
 ```lua
 require("nvim-dap-virtual-text").setup()
