@@ -95,6 +95,8 @@ function M.refresh(session)
   session = session or dap.session()
   local virtual_text = require 'nvim-dap-virtual-text/virtual_text'
 
+  virtual_text.clear_virtual_text()
+
   if not options.enabled then
     return
   end
@@ -104,12 +106,11 @@ function M.refresh(session)
 
   if options.all_frames and session.threads and session.threads[session.stopped_thread_id] then
     local frames = session.threads[session.stopped_thread_id].frames
-    virtual_text.clear_virtual_text()
     for _, f in pairs(frames or {}) do
-      virtual_text.set_virtual_text(f, options, false)
+      virtual_text.set_virtual_text(f, options)
     end
   else
-    virtual_text.set_virtual_text(session.current_frame, options, true)
+    virtual_text.set_virtual_text(session.current_frame, options)
   end
 end
 
