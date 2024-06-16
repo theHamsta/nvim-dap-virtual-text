@@ -83,10 +83,11 @@ local options = {
   --- @return string|nil text how the virtual text should be displayed or nil, if this variable shouldn't be displayed
   --- @diagnostic disable-next-line: unused-local
   display_callback = function(variable, buf, stackframe, node, options)
+    -- by default, strip out new line characters
     if options.virt_text_pos == 'inline' then
-      return ' = ' .. variable.value
+      return ' = ' .. variable.value:gsub('%s+', ' ')
     else
-      return variable.name .. ' = ' .. variable.value
+      return variable.name .. ' = ' .. variable.value:gsub('%s+', ' ')
     end
   end,
 }
