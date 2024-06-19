@@ -84,7 +84,10 @@ function M.set_virtual_text(stackframe, options)
   if not stackframe.source.path then
     return
   end
-  local buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
+  local buf = vim.fn.bufnr(stackframe.source.path, false)
+  if buf == '-1' then
+    buf = vim.uri_to_bufnr(vim.uri_from_fname(stackframe.source.path))
+  end
   local parser
   local lang
   local ft = vim.bo[buf].ft
