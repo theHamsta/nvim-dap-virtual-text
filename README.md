@@ -11,8 +11,10 @@ Plug 'theHamsta/nvim-dap-virtual-text'
 
 > [!NOTE]
 >
-> With Neovim 0.9 and above, `nvim-treesitter` is not a dependency.
-> This plugin only needs the parsers for the languages you want to use it with.
+> With Neovim 0.9 and above, `nvim-treesitter` is not hard a dependency.
+> This plugin only needs the parsers for the languages you want to use it with
+> and `locals.scm` queries defining references and definitions of variables
+> (typically provided by nvim-treesitter).
 
 The hlgroup for the virtual text is `NvimDapVirtualText` (linked to `Comment`).
 Exceptions that caused the debugger to stop are displayed as `NvimDapVirtualTextError`
