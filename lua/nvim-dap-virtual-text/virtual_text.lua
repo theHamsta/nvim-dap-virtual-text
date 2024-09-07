@@ -126,14 +126,16 @@ function M.set_virtual_text(stackframe, options)
     local query = get_query(ltree:lang(), 'locals')
     if query then
       for _, match, _ in query:iter_matches(tree:root(), buf, 0, -1) do
-        for id, node in pairs(match) do
-          local cap_id = query.captures[id]
-          if cap_id:find('scope', 1, true) then
-            table.insert(scope_nodes, node)
-          elseif cap_id:find('definition', 1, true) then
-            table.insert(definition_nodes, node)
-          elseif options.all_references and cap_id:find('reference', 1, true) then
-            table.insert(definition_nodes, node)
+        for id, nodes in pairs(match) do
+          for _, node in pairs(nodes) do
+            local cap_id = query.captures[id]
+            if cap_id:find('scope', 1, true) then
+              table.insert(scope_nodes, node)
+            elseif cap_id:find('definition', 1, true) then
+              table.insert(definition_nodes, node)
+            elseif options.all_references and cap_id:find('reference', 1, true) then
+              table.insert(definition_nodes, node)
+            end
           end
         end
       end
