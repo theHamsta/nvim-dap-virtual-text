@@ -125,7 +125,7 @@ function M.set_virtual_text(stackframe, options)
   parser:for_each_tree(function(tree, ltree)
     local query = get_query(ltree:lang(), 'locals')
     if query then
-      for _, match, _ in query:iter_matches(tree:root(), buf, 0, -1) do
+      for _, match, _ in query:iter_matches(tree:root(), buf, 0, -1, { all = true }) do
         for id, nodes in pairs(match) do
           for _, node in pairs(nodes) do
             local cap_id = query.captures[id]
