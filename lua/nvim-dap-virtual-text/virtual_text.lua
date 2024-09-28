@@ -92,7 +92,7 @@ function M.set_virtual_text(stackframe, options)
   local lang
   local ft = vim.bo[buf].ft
   if ft == '' then
-    ft = vim.filetype.match { buf = buf }
+    ft = vim.filetype.match { buf = buf } or ''
     if ft == '' then
       return
     end
