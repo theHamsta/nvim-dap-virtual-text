@@ -102,7 +102,11 @@ function M.set_virtual_text(stackframe, options)
     if not lang then
       return
     end
-    parser = vim.treesitter.get_parser(buf, lang)
+    local ok
+    ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
+    if not ok then
+      return
+    end
   else
     local require_ok, parsers = pcall(require, 'nvim-treesitter.parsers')
     if not require_ok then
@@ -112,7 +116,11 @@ function M.set_virtual_text(stackframe, options)
     if not lang then
       return
     end
-    parser = parsers.get_parser(buf, lang)
+    local ok
+    ok, parser = pcall(parsers.get_parser, buf, lang)
+    if not ok then
+      return
+    end
   end
 
   local scope_nodes = {}
