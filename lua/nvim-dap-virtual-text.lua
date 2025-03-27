@@ -115,6 +115,10 @@ function M.refresh(session)
   end
 end
 
+function M.is_enabled()
+  return options.enabled
+end
+
 function M.enable()
   options.enabled = true
   M.refresh()
