@@ -188,7 +188,7 @@ function M.setup(opts)
 
   dap.listeners.after.variables[plugin_id] = M.refresh
 
-  dap.listeners.after.stackTrace[plugin_id] = function(session, body, _)
+  dap.listeners.after.stackTrace[plugin_id] = function(session, _, body)
     if not options.enabled then
       return
     end
